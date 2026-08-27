@@ -1,0 +1,2151 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>腦力開機！銀髮三關挑戰</title>
+<style>
+:root{
+  --bg:#f7f2e8;
+  --paper:#fffdf8;
+  --ink:#2f2a25;
+  --muted:#71685f;
+  --line:#b99b67;
+  --accent:#8a5d2f;
+  --soft:#efe4cf;
+  --soft2:#edf2f7;
+  --ok:#2f7d4a;
+  --warn:#a45a2a;
+  --shadow:0 10px 30px rgba(63,48,33,.10);
+}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0;background:var(--bg);color:var(--ink);font-family:"Noto Sans TC","Microsoft JhengHei",system-ui,sans-serif}
+button,input,textarea,select{font:inherit}
+button{cursor:pointer}
+.app{max-width:1100px;margin:auto;padding:18px}
+.topbar{display:flex;gap:10px;align-items:center;justify-content:space-between;flex-wrap:wrap;margin-bottom:14px}
+.brand h1{margin:0;font-size:clamp(28px,4vw,44px);letter-spacing:.03em}
+.brand p{margin:6px 0 0;color:var(--muted);font-size:18px}
+.toolbar{display:flex;gap:8px;flex-wrap:wrap}
+.btn{border:1px solid var(--line);background:white;color:var(--ink);padding:10px 14px;border-radius:12px;min-height:46px;font-weight:700}
+.btn.primary{background:var(--accent);color:#fff;border-color:var(--accent)}
+.btn.ghost{background:transparent}
+.btn.danger{border-color:#b85b5b;color:#9b3d3d}
+.panel{background:var(--paper);border:1px solid #dbc8a6;border-radius:18px;box-shadow:var(--shadow);padding:18px;margin-bottom:16px}
+.status{display:flex;gap:8px;flex-wrap:wrap;margin:8px 0 0}
+.badge{display:inline-flex;align-items:center;gap:6px;padding:7px 10px;border-radius:999px;background:var(--soft);font-size:14px;font-weight:700}
+.mode-teacher .badge.teacher{background:#ead6b5}
+.nav{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin:16px 0}
+.nav button{padding:14px;border-radius:14px;border:1px solid var(--line);background:#fff;font-weight:800;font-size:18px}
+.nav button.active{background:var(--accent);color:#fff}
+.section-title{display:flex;align-items:end;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-bottom:14px}
+.section-title h2{margin:0;font-size:30px}
+.section-title .sub{color:var(--muted);font-size:16px}
+.instruction{font-size:21px;line-height:1.6;margin:6px 0 14px}
+.question-card{border:1px solid #d8c6a8;border-radius:16px;padding:14px;margin:12px 0;background:#fff}
+.eye-row{display:grid;grid-template-columns:120px 1fr;gap:12px;align-items:center;border-bottom:1px solid #e7d7bb;padding:10px 0}
+.eye-row:last-child{border-bottom:none}
+.eye-label{font-weight:800;font-size:20px}
+.char-strip{display:flex;gap:18px;flex-wrap:wrap;align-items:center}
+.char{font-family:"DFKai-SB","BiauKai","標楷體","KaiTi",serif;font-size:38px;line-height:1.2;padding:4px 2px;border-radius:8px}
+.char.marked{outline:4px solid rgba(180,60,60,.22);background:#fff0f0}
+.pair-wrap{display:grid;grid-template-columns:1fr 80px 1fr;gap:10px;align-items:center}
+.pair-col{display:flex;flex-direction:column;gap:12px}
+.word-chip{border:2px solid #9ab0c4;background:#f7fbff;border-radius:14px;padding:14px;text-align:center;font-size:28px;font-weight:800;min-height:62px}
+.word-chip.selected{background:#dcecff}
+.pair-mid{text-align:center;color:var(--muted);font-size:26px}
+.grid-wrap{overflow:auto;padding-bottom:6px}
+.num-grid{display:grid;grid-template-columns:repeat(5,68px);width:max-content;margin:10px auto;border:2px solid #304b8a}
+.num-cell{width:68px;height:62px;display:flex;align-items:center;justify-content:center;font-size:32px;border-right:1px solid #304b8a;border-bottom:1px solid #304b8a;background:#fbfff0;user-select:none}
+.num-cell.selected{background:#fff3a8}
+.num-cell.answer{background:#dff2df;outline:3px solid #3d8a52;outline-offset:-3px}
+.task-list{display:grid;gap:10px;margin-top:14px}
+.task{border:1px solid #dec59a;border-radius:14px;padding:12px;background:#fffaf2}
+.task strong{font-size:20px}
+.answer-line{margin-top:8px;display:flex;gap:8px;flex-wrap:wrap}
+.answer-input{min-width:90px;max-width:120px;border:1px solid #aaa;border-radius:10px;padding:8px 10px;font-size:20px}
+.hintbox{margin-top:10px;padding:10px 12px;border-radius:12px;background:#fff4cf;border:1px solid #e5ca73;display:none}
+.hintbox.show{display:block}
+.feedback{margin-top:8px;font-weight:800}
+.feedback.ok{color:var(--ok)}
+.feedback.try{color:var(--warn)}
+.teacher-only{display:none}
+.mode-teacher .teacher-only{display:block}
+.edit-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.edit-grid label{font-weight:700;font-size:14px;color:var(--muted)}
+.edit-grid input,.edit-grid textarea{width:100%;margin-top:5px;padding:10px;border:1px solid #c9b89b;border-radius:10px;background:#fff}
+.editor-block{border:1px dashed #c5a677;border-radius:14px;padding:12px;margin-top:12px;background:#fffdf9}
+.teacher-answer{border-left:5px solid #4b7b54;background:#f3fbf4;padding:12px;border-radius:12px;margin-top:10px}
+.footer-note{color:var(--muted);font-size:14px;line-height:1.6}
+.print-only{display:none}
+@media (max-width:720px){
+  .app{padding:10px}
+  .nav{grid-template-columns:1fr}
+  .eye-row{grid-template-columns:1fr}
+  .pair-wrap{grid-template-columns:1fr}
+  .pair-mid{transform:rotate(90deg)}
+  .edit-grid{grid-template-columns:1fr}
+  .num-grid{grid-template-columns:repeat(5,56px)}
+  .num-cell{width:56px;height:56px;font-size:28px}
+}
+@page{size:A4;margin:10mm}
+@media print{
+  body{background:#fff}
+  .app{max-width:none;padding:0}
+  .no-print,.toolbar,.nav,.status,.hintbox,.feedback,.teacher-only .editor-block{display:none!important}
+  .panel{box-shadow:none;border:0;padding:0;margin:0 0 8mm}
+  .question-card{break-inside:avoid}
+  .print-only{display:block}
+  .brand h1{font-size:28pt}
+  .brand p{font-size:12pt}
+  .section-title h2{font-size:20pt}
+  .instruction{font-size:14pt}
+  .num-grid{transform:scale(.92);transform-origin:top center}
+}
+
+.lesson-note{font-size:18px;line-height:1.75;white-space:pre-wrap;background:#fffaf2;border:1px solid #dec59a;border-radius:14px;padding:14px}
+.print-options{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin:12px 0}
+.checkrow{display:flex;align-items:center;gap:8px;border:1px solid #d8c6a8;border-radius:12px;padding:10px;background:#fff}
+.checkrow input{width:20px;height:20px}
+@media (max-width:720px){.print-options{grid-template-columns:1fr}}
+@media print{
+  body.print-onepage .stage.print-selected{display:block!important;break-inside:avoid;margin-bottom:3mm!important}
+  body.print-onepage .brand{margin-bottom:1mm}
+  body.print-onepage .brand h1{font-size:20pt}
+  body.print-onepage .brand p{font-size:9pt;margin:1mm 0}
+  body.print-onepage .stage.print-selected{padding:0!important;margin:0 0 2mm!important}
+  body.print-onepage .stage.print-selected .section-title{margin-bottom:2mm}
+  body.print-onepage .stage.print-selected .section-title h2{font-size:14pt}
+  body.print-onepage .stage.print-selected .section-title .sub{display:none}
+  body.print-onepage .stage.print-selected .instruction{font-size:9pt!important;line-height:1.25!important;margin:1mm 0 2mm!important}
+  body.print-onepage .stage.print-selected .instruction{font-size:9pt;line-height:1.25}
+  body.print-onepage .stage.print-selected .question-card{padding:5px;margin:4px 0}
+  body.print-onepage .stage.print-selected .eye-row{padding:4px 0}
+  body.print-onepage .stage.print-selected .char{font-size:21px}
+  body.print-onepage .stage.print-selected .word-chip{font-size:16px;min-height:34px;padding:4px}
+  body.print-onepage .stage.print-selected .num-cell{width:43px;height:36px;font-size:19px}
+  body.print-onepage .stage.print-selected .num-grid{transform:scale(.82);transform-origin:top center;margin:1mm auto}
+  body.print-onepage .stage.print-selected .task{padding:5px;margin:3px 0}
+  body.print-onepage .stage.print-selected .task strong{font-size:14px}
+  body.print-onepage .stage.print-selected .answer-input{font-size:13px;padding:4px;min-width:65px;max-width:90px}
+  body.print-pages .stage.print-selected{display:block!important;break-after:page}
+  body.print-pages .stage.print-selected:last-of-type{break-after:auto}
+  body.print-custom .stage.print-selected{display:block!important}
+  body.print-custom .stage:not(.print-selected){display:none!important}
+  body.print-onepage .stage:not(.print-selected), body.print-pages .stage:not(.print-selected){display:none!important}
+  body.print-teacher .teacher-answer{display:block!important}
+  body.print-teacher .teacher-only{display:none!important}
+  body.print-teacher .teacher-answer{border-left:4px solid #555;background:#f7f7f7;padding:8px;margin-top:6px}
+  body.print-lesson .lesson-plan-print{display:block!important;break-before:page}
+body:not(.print-lesson) .lesson-plan-print{display:none!important}
+}
+
+.active-task{outline:4px solid #c88b34;box-shadow:0 0 0 4px rgba(200,139,52,.12)}
+.task-status{margin-top:8px;font-size:15px;font-weight:800;color:#76552f}
+.num-cell.pick{background:#ffd97a!important;outline:3px solid #d68618;outline-offset:-3px}
+.submit-panel{background:#fff8df;border:2px solid #d8b35f}
+.score-box{display:none;margin-top:14px;border-radius:16px;padding:16px;background:#f6fbf4;border:2px solid #87b98d}
+.score-box.show{display:block}
+.score-big{font-size:36px;font-weight:900}
+.score-detail{margin-top:10px;line-height:1.8;font-size:17px}
+.grade-ok{color:#24713c;font-weight:800}
+.grade-no{color:#a54b35;font-weight:800}
+.answer-input.autofilled{background:#fff5bf;border-color:#d3a42f}
+.mini-btn{border:1px solid #c9b89b;background:#fff;padding:7px 10px;border-radius:10px;font-weight:700}
+@media print{.submit-panel{display:none!important}}
+
+.stage{scroll-margin-top:12px}
+.stage + .stage{margin-top:18px}
+@media print{.stage + .stage{margin-top:0}}
+
+.grid-size-controls{display:flex;gap:10px;flex-wrap:wrap;align-items:end;margin-bottom:12px}
+.grid-size-controls label{font-weight:700;color:var(--muted)}
+.grid-size-controls input{width:90px;padding:9px;border:1px solid #c9b89b;border-radius:10px}
+.grid-editor-table{display:grid;gap:5px;width:max-content;margin:10px auto}
+.grid-editor-table input{width:52px;height:44px;text-align:center;font-size:20px;border:1px solid #aab7c4;border-radius:8px}
+.validation-box{margin-top:12px;border:1px solid #c9b89b;border-radius:14px;padding:12px;background:#fbfbf8;line-height:1.7}
+.validation-ok{color:#24713c;font-weight:800}
+.validation-warn{color:#a54b35;font-weight:800}
+.task-simple-row{display:grid;grid-template-columns:80px 1fr 120px 120px;gap:8px;align-items:end;margin:8px 0}
+.task-simple-row label{font-size:13px;color:var(--muted);font-weight:700}
+.task-simple-row input,.task-simple-row select{width:100%;padding:8px;border:1px solid #c9b89b;border-radius:9px;background:#fff}
+@media(max-width:720px){.task-simple-row{grid-template-columns:1fr 1fr}.grid-editor-table input{width:46px;height:42px}}
+
+.quick-guide{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin:12px 0}
+.guide-card{border:1px solid #dbc8a6;border-radius:14px;background:#fff;padding:12px;text-align:center}
+.guide-card strong{display:block;font-size:18px;margin-bottom:4px}
+.progressbar{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
+.progress-pill{padding:7px 11px;border-radius:999px;background:#eee7da;font-weight:800}
+.progress-pill.done{background:#dff2df;color:#24683a}
+.teacher-jump{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
+.teacher-jump button{font-size:14px}
+.teacher-head{border:2px solid #c49a58;background:#fff9e9}
+.autosave-note{font-size:13px;color:#6e665e;margin-top:6px}
+@media(max-width:720px){.quick-guide{grid-template-columns:1fr}}
+
+.print-center{text-align:center}
+.print-preview-box{border:2px solid #c7ad7a;background:#fffaf0;border-radius:14px;padding:12px;margin-top:12px}
+.print-preview-box strong{font-size:18px}
+@media print{
+  /* 預設全部關閉，依模式再打開 */
+  .teacher-only,.no-print,.submit-panel,#learnerGuide,#teacherDashboard{display:none!important}
+  body{background:#fff!important}
+  .app{max-width:none!important;padding:0!important}
+  .panel{box-shadow:none!important;border:0!important}
+
+  body.print-student .stage:not(.print-selected),
+  body.print-answer .stage:not(.print-selected),
+  body.print-student-pages .stage:not(.print-selected){display:none!important}
+
+  /* 長輩題目版：不帶答案 */
+  body.print-student .teacher-answer,
+  body.print-student-pages .teacher-answer{display:none!important}
+  body.print-student .stage.print-selected,
+  body.print-student-pages .stage.print-selected{display:block!important}
+
+  /* 三關合併一頁 */
+  body.print-student-onepage .stage.print-selected{
+    display:block!important;
+    margin:0 0 2mm!important;
+    padding:0!important;
+    break-inside:avoid;
+  }
+  body.print-student-onepage .brand h1{font-size:20pt!important}
+  body.print-student-onepage .brand p{font-size:9pt!important}
+  body.print-student-onepage .section-title{margin-bottom:1mm!important}
+  body.print-student-onepage .section-title h2{font-size:14pt!important}
+  body.print-student-onepage .section-title .sub{display:none!important}
+  body.print-student-onepage .instruction{font-size:9pt!important;line-height:1.2!important;margin:1mm 0!important}
+  body.print-student-onepage .question-card{padding:4px!important;margin:3px 0!important}
+  body.print-student-onepage .eye-row{padding:3px 0!important}
+  body.print-student-onepage .char{font-size:20px!important}
+  body.print-student-onepage .word-chip{font-size:15px!important;min-height:32px!important;padding:3px!important}
+  body.print-student-onepage .task{padding:4px!important;margin:2px 0!important}
+  body.print-student-onepage .task strong{font-size:13px!important}
+  body.print-student-onepage .answer-input{font-size:12px!important;padding:3px!important;min-width:60px!important;max-width:84px!important}
+  body.print-student-onepage .num-grid{transform:scale(.78)!important;transform-origin:top center!important;margin:0 auto!important}
+
+  /* 一關一頁 */
+  body.print-student-pages .stage.print-selected{
+    break-after:page!important;
+    display:block!important;
+  }
+  body.print-student-pages .stage.print-selected:last-of-type{break-after:auto!important}
+
+  /* 教師答案版 */
+  body.print-answer .stage.print-selected{
+    display:block!important;
+    break-after:page!important;
+  }
+  body.print-answer .stage.print-selected:last-of-type{break-after:auto!important}
+  body.print-answer .teacher-answer{
+    display:block!important;
+    border-left:5px solid #555!important;
+    background:#f7f7f7!important;
+    padding:10px!important;
+    margin-top:8px!important;
+  }
+  body.print-answer .answer-input,
+  body.print-answer .hintbox,
+  body.print-answer .task-status{display:none!important}
+
+  /* 教師教案獨立版 */
+  body.print-lesson-only .stage,
+  body.print-lesson-only .brand,
+  body.print-lesson-only .print-only:not(.lesson-plan-print){display:none!important}
+  body.print-lesson-only .lesson-plan-print{
+    display:block!important;
+    break-before:auto!important;
+  }
+
+  /* 非教案模式不要偷帶教案 */
+  body:not(.print-lesson-only) .lesson-plan-print{display:none!important}
+}
+
+.teacher-syncbar{display:none;position:sticky;top:8px;z-index:20;background:#fff7df;border:2px solid #c79b45;border-radius:14px;padding:10px 12px;margin:10px 0;box-shadow:0 5px 16px rgba(0,0,0,.08)}
+.mode-teacher .teacher-syncbar{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap}
+.sync-state{font-weight:900}
+.sync-state.ok{color:#24713c}
+.sync-state.dirty{color:#a45a2a}
+.mode-teacher #learnerGuide{display:none}
+.mode-teacher .teacher-answer{display:block}
+.teacher-section-label{font-weight:900;margin-bottom:6px;color:#6f4a21}
+@media print{.teacher-syncbar{display:none!important}}
+
+/* ===== v15 樂齡大字體 ===== */
+:root{--senior-scale:1}
+.senior-fontbar{
+  display:flex;align-items:center;justify-content:center;gap:10px;flex-wrap:wrap;
+  margin:10px 0 14px;padding:10px;border-radius:14px;background:#fff8e8;border:1px solid #dfc899
+}
+.senior-fontbar button{min-width:64px;min-height:48px;font-size:22px;font-weight:900}
+.senior-fontbar .font-label{font-size:20px;font-weight:900}
+body:not(.mode-teacher) .brand h1{font-size:calc(40px * var(--senior-scale));line-height:1.15}
+body:not(.mode-teacher) .brand p{font-size:calc(22px * var(--senior-scale));line-height:1.5}
+body:not(.mode-teacher) .section-title h2{font-size:calc(32px * var(--senior-scale));line-height:1.25}
+body:not(.mode-teacher) .section-title .sub,
+body:not(.mode-teacher) .instruction{font-size:calc(23px * var(--senior-scale));line-height:1.65}
+body:not(.mode-teacher) .guide-card{font-size:calc(22px * var(--senior-scale));line-height:1.5;padding:18px}
+body:not(.mode-teacher) .guide-card strong{font-size:calc(27px * var(--senior-scale))}
+body:not(.mode-teacher) .progress-pill{font-size:calc(19px * var(--senior-scale));padding:10px 15px}
+body:not(.mode-teacher) .eye-label{font-size:calc(25px * var(--senior-scale));line-height:1.5}
+body:not(.mode-teacher) .char{font-size:calc(38px * var(--senior-scale));min-width:52px;min-height:52px;padding:7px}
+body:not(.mode-teacher) .word-chip{
+  font-size:calc(27px * var(--senior-scale));min-height:62px;padding:12px 16px;
+  border-width:2px;border-radius:14px
+}
+body:not(.mode-teacher) .task{padding:16px;margin:12px 0}
+body:not(.mode-teacher) .task strong{font-size:calc(25px * var(--senior-scale));line-height:1.5}
+body:not(.mode-teacher) .answer-input{
+  font-size:calc(22px * var(--senior-scale));min-height:50px;padding:8px 10px
+}
+body:not(.mode-teacher) .num-cell{
+  font-size:calc(32px * var(--senior-scale));font-weight:900;min-width:62px;min-height:58px
+}
+body:not(.mode-teacher) .btn,
+body:not(.mode-teacher) button{
+  font-size:calc(20px * var(--senior-scale));min-height:50px
+}
+body:not(.mode-teacher) #submitQuiz{
+  font-size:calc(26px * var(--senior-scale));min-height:64px;padding:14px 28px
+}
+body:not(.mode-teacher) .feedback{font-size:calc(21px * var(--senior-scale));line-height:1.5}
+body:not(.mode-teacher) #scoreBig{font-size:calc(36px * var(--senior-scale))}
+body:not(.mode-teacher) #scoreDetail{font-size:calc(21px * var(--senior-scale));line-height:1.7}
+body:not(.mode-teacher) .panel{padding:22px}
+body:not(.mode-teacher) .stage{margin-top:24px}
+body:not(.mode-teacher) .question-card{padding:16px;margin:14px 0}
+
+/* 避免小螢幕因放大而溢出 */
+@media(max-width:760px){
+  body:not(.mode-teacher) .brand h1{font-size:calc(34px * var(--senior-scale))}
+  body:not(.mode-teacher) .section-title h2{font-size:calc(28px * var(--senior-scale))}
+  body:not(.mode-teacher) .instruction{font-size:calc(21px * var(--senior-scale))}
+  body:not(.mode-teacher) .char{font-size:calc(32px * var(--senior-scale));min-width:46px}
+  body:not(.mode-teacher) .word-chip{font-size:calc(24px * var(--senior-scale))}
+  body:not(.mode-teacher) .num-grid{max-width:100%;overflow:auto}
+  .senior-fontbar{position:sticky;top:4px;z-index:25}
+}
+@media print{
+  .senior-fontbar{display:none!important}
+  :root{--senior-scale:1!important}
+}
+
+/* ===== v16R：穩定版相反詞連連看 ===== */
+.pair-wrap{
+  position:relative!important;
+  display:grid!important;
+  grid-template-columns:minmax(170px,1fr) 150px minmax(170px,1fr)!important;
+  gap:18px!important;
+  align-items:stretch!important;
+}
+.pair-col{position:relative;z-index:3;display:flex;flex-direction:column;gap:16px}
+.pair-mid{
+  position:relative;z-index:1;display:flex;align-items:center;justify-content:center;
+  color:#766e66;font-size:18px;min-height:220px
+}
+.pair-lines{
+  position:absolute;inset:0;width:100%;height:100%;z-index:2;pointer-events:none;overflow:visible
+}
+.pair-lines line{stroke:#486d8e;stroke-width:5;stroke-linecap:round}
+.word-chip.left-chip,.word-chip.right-chip{position:relative}
+.word-chip.left-chip::after,.word-chip.right-chip::before{
+  content:"";position:absolute;top:50%;transform:translateY(-50%);
+  width:12px;height:12px;border-radius:50%;background:white;border:3px solid #486d8e
+}
+.word-chip.left-chip::after{right:-8px}
+.word-chip.right-chip::before{left:-8px}
+
+/* ===== v16R：長輩列印清楚化 ===== */
+@media print{
+  /* 一般題目列印：說明文字與答案框放大 */
+  body.print-student-pages .instruction,
+  body.print-senior-two .instruction{
+    font-size:14pt!important;
+    line-height:1.55!important;
+    font-weight:600!important;
+  }
+  body.print-student-pages .section-title h2,
+  body.print-senior-two .section-title h2{
+    font-size:21pt!important;
+    line-height:1.25!important;
+  }
+  body.print-student-pages .task strong,
+  body.print-senior-two .task strong{
+    font-size:16pt!important;
+    line-height:1.45!important;
+  }
+  body.print-student-pages .answer-input,
+  body.print-senior-two .answer-input{
+    font-size:16pt!important;
+    min-height:14mm!important;
+    min-width:30mm!important;
+    max-width:42mm!important;
+    padding:3mm!important;
+    border:1.5px solid #777!important;
+  }
+  body.print-student-pages .num-cell,
+  body.print-senior-two .num-cell{font-size:20pt!important;font-weight:800!important}
+
+  /* 第二關紙本左右連線，中央留大空間；作答紙不印既有線 */
+  body.print-student-pages .pair-wrap,
+  body.print-senior-two .pair-wrap{
+    grid-template-columns:1fr 45mm 1fr!important;
+    gap:5mm!important;
+  }
+  body.print-student-pages .word-chip,
+  body.print-senior-two .word-chip{
+    font-size:18pt!important;
+    min-height:14mm!important;
+    padding:3mm!important;
+  }
+  body.print-student-pages .pair-mid,
+  body.print-senior-two .pair-mid{min-height:48mm!important}
+  body.print-student-pages .pair-lines,
+  body.print-senior-two .pair-lines{display:none!important}
+
+  /* 樂齡大字兩頁固定分頁：第1頁第一+第二關，第2頁第三關 */
+  body.print-senior-two .stage{display:block!important}
+  body.print-senior-two .stage[data-stage="1"]{margin-bottom:3mm!important}
+  body.print-senior-two .stage[data-stage="2"]{break-after:page!important}
+  body.print-senior-two .stage[data-stage="3"]{break-after:auto!important}
+  body.print-senior-two .stage[data-stage="1"] .question-card{
+    padding:2mm!important;margin:1.5mm 0!important
+  }
+  body.print-senior-two .stage[data-stage="1"] .char{font-size:20pt!important}
+  body.print-senior-two .stage[data-stage="2"] .word-chip{
+    min-height:12mm!important;font-size:17pt!important
+  }
+  body.print-senior-two .stage[data-stage="2"] .pair-mid{min-height:40mm!important}
+}
+
+/* 手機保持左右連線，不改成上下 */
+@media(max-width:760px){
+  .pair-wrap{
+    grid-template-columns:minmax(110px,1fr) 54px minmax(110px,1fr)!important;
+    gap:8px!important
+  }
+  .pair-mid{font-size:13px;min-height:210px}
+}
+
+
+/* ===== v17：數字答案框加寬加大 ===== */
+body:not(.mode-teacher) .num-answer{
+  min-width:180px!important;
+  max-width:260px!important;
+  min-height:64px!important;
+  font-size:28px!important;
+  padding:12px 16px!important;
+  font-weight:800!important;
+}
+body:not(.mode-teacher) .answer-line{
+  gap:12px!important;
+  flex-wrap:wrap!important;
+}
+@media(max-width:760px){
+  body:not(.mode-teacher) .num-answer{
+    min-width:150px!important;
+    max-width:220px!important;
+    font-size:24px!important;
+  }
+}
+
+/* ===== v17：列印答案框更大 ===== */
+@media print{
+  body.print-student-pages .num-answer,
+  body.print-senior-two .num-answer,
+  body.print-student .num-answer{
+    min-width:45mm!important;
+    max-width:62mm!important;
+    min-height:16mm!important;
+    font-size:18pt!important;
+    padding:4mm!important;
+    font-weight:800!important;
+  }
+
+  body.print-student-pages .answer-line,
+  body.print-senior-two .answer-line,
+  body.print-student .answer-line{
+    gap:4mm!important;
+    flex-wrap:wrap!important;
+  }
+
+  /* 第二關整塊禁止跨頁 */
+  body.print-student-pages .stage[data-stage="2"],
+  body.print-senior-two .stage[data-stage="2"],
+  body.print-student .stage[data-stage="2"]{
+    break-inside:avoid!important;
+    page-break-inside:avoid!important;
+  }
+
+  body.print-student-pages .pair-wrap,
+  body.print-senior-two .pair-wrap,
+  body.print-student .pair-wrap{
+    break-inside:avoid!important;
+    page-break-inside:avoid!important;
+  }
+
+  body.print-student-pages #pairWrap,
+  body.print-senior-two #pairWrap,
+  body.print-student #pairWrap{
+    break-inside:avoid!important;
+    page-break-inside:avoid!important;
+  }
+
+  /* 樂齡兩頁模式：第1頁確保第一+第二關都放在一起 */
+  body.print-senior-two .stage[data-stage="1"]{
+    break-inside:avoid!important;
+    page-break-inside:avoid!important;
+    margin-bottom:2mm!important;
+  }
+  body.print-senior-two .stage[data-stage="2"]{
+    break-before:auto!important;
+    page-break-before:auto!important;
+    break-after:page!important;
+    page-break-after:always!important;
+    margin-top:2mm!important;
+  }
+
+  /* 為了不跳頁，第一頁的第一關稍微收斂，但仍維持大字 */
+  body.print-senior-two .stage[data-stage="1"] .section-title h2{
+    font-size:19pt!important;
+  }
+  body.print-senior-two .stage[data-stage="1"] .instruction{
+    font-size:12.5pt!important;
+    line-height:1.4!important;
+    margin:1mm 0 2mm!important;
+  }
+  body.print-senior-two .stage[data-stage="1"] .question-card{
+    padding:1.8mm!important;
+    margin:1.2mm 0!important;
+  }
+  body.print-senior-two .stage[data-stage="1"] .eye-row{
+    padding:1mm 0!important;
+  }
+  body.print-senior-two .stage[data-stage="1"] .char{
+    font-size:19pt!important;
+  }
+
+  /* 第二關整體高度固定在合理範圍，不拆頁 */
+  body.print-senior-two .stage[data-stage="2"] .instruction{
+    font-size:12.5pt!important;
+    margin:1mm 0 2mm!important;
+  }
+  body.print-senior-two .stage[data-stage="2"] .pair-wrap{
+    min-height:0!important;
+    height:auto!important;
+  }
+  body.print-senior-two .stage[data-stage="2"] .pair-col{
+    gap:2.5mm!important;
+  }
+  body.print-senior-two .stage[data-stage="2"] .word-chip{
+    min-height:10.5mm!important;
+    font-size:16pt!important;
+    padding:2mm!important;
+  }
+  body.print-senior-two .stage[data-stage="2"] .pair-mid{
+    min-height:35mm!important;
+  }
+}
+
+/* ===== v18：第三關列印提示 + 空白答案框 ===== */
+.print-task-hint{display:none}
+
+@media print{
+  /* 列印時，答案框裡的「例：3＋5」完全不印出 */
+  .num-answer::placeholder{
+    color:transparent!important;
+    opacity:0!important;
+  }
+  .num-answer::-webkit-input-placeholder{
+    color:transparent!important;
+    opacity:0!important;
+  }
+
+  /* 第三關保留簡潔提示，但不顯示線上操作文字 */
+  body.print-student .stage[data-stage="3"] .print-task-hint,
+  body.print-student-pages .stage[data-stage="3"] .print-task-hint,
+  body.print-senior-two .stage[data-stage="3"] .print-task-hint{
+    display:block!important;
+    font-size:13.5pt!important;
+    line-height:1.5!important;
+    font-weight:700!important;
+    color:#6f532b!important;
+    margin:2mm 0 3mm!important;
+    padding:2.5mm 3mm!important;
+    background:#fff8df!important;
+    border-left:4px solid #c99533!important;
+    border-radius:2mm!important;
+  }
+
+  body.print-student .stage[data-stage="3"] .task-status,
+  body.print-student-pages .stage[data-stage="3"] .task-status,
+  body.print-senior-two .stage[data-stage="3"] .task-status{
+    display:none!important;
+  }
+
+  /* 線上點提示產生的黃色框不帶到學生紙本，避免答案/提示重複 */
+  body.print-student .stage[data-stage="3"] .hintbox,
+  body.print-student-pages .stage[data-stage="3"] .hintbox,
+  body.print-senior-two .stage[data-stage="3"] .hintbox{
+    display:none!important;
+  }
+}
+
+/* ===== v19：第三關答案框改為適中寬度，優先同列排列 ===== */
+body:not(.mode-teacher) .num-answer{
+  min-width:140px!important;
+  width:150px!important;
+  max-width:160px!important;
+  min-height:58px!important;
+  font-size:25px!important;
+  padding:9px 11px!important;
+}
+body:not(.mode-teacher) .answer-line{
+  display:flex!important;
+  flex-wrap:wrap!important;
+  gap:8px!important;
+  align-items:center!important;
+}
+@media print{
+  body.print-student .num-answer,
+  body.print-student-pages .num-answer,
+  body.print-senior-two .num-answer{
+    min-width:32mm!important;
+    width:34mm!important;
+    max-width:36mm!important;
+    min-height:13mm!important;
+    font-size:16pt!important;
+    padding:2.5mm!important;
+  }
+  body.print-student .answer-line,
+  body.print-student-pages .answer-line,
+  body.print-senior-two .answer-line{
+    display:flex!important;
+    flex-wrap:nowrap!important;
+    gap:2.5mm!important;
+    align-items:center!important;
+    width:100%!important;
+  }
+  /* 三組答案優先排同一列，不因框過長掉到下一行 */
+  body.print-senior-two .stage[data-stage="3"] .task{
+    break-inside:avoid!important;
+    page-break-inside:avoid!important;
+  }
+  body.print-senior-two .stage[data-stage="3"] .answer-line > span{
+    flex:0 0 auto!important;
+  }
+  body.print-senior-two .stage[data-stage="3"] .clear-one-answer{
+    display:none!important;
+  }
+}
+</style>
+</head>
+<body>
+<div class="app" id="app">
+  <div class="topbar no-print">
+    <div class="brand">
+      <h1 id="pageTitle">腦力開機！銀髮三關挑戰</h1>
+      <p id="pageSubtitle">看仔細・連一連・找數字</p>
+      <div class="status">
+        <span class="badge">不比速度・找到就是成功</span>
+        <span class="badge teacher" id="modeBadge">長輩作答模式</span>
+      </div>
+    </div>
+    <div class="toolbar">
+      <button class="btn" id="teacherBtn">教師模式</button>
+      <button class="btn" id="printBtn">列印／另存 PDF</button>
+      <button class="btn" id="resetBtn">清除作答</button>
+    </div>
+  </div>
+
+  <div class="teacher-syncbar no-print" id="teacherSyncBar">
+    <div>
+      <strong>教師模式已開啟</strong>
+      <span class="sync-state ok" id="syncState">｜目前設定已同步</span>
+    </div>
+    <div class="toolbar">
+      <button class="btn" id="syncAllBtn" type="button">重新同步答案／檢查</button>
+      <button class="btn" id="exitTeacherBtn" type="button">返回長輩作答</button>
+    </div>
+  </div>
+
+  <div class="panel print-only">
+    <strong>姓名：</strong>＿＿＿＿＿＿＿＿　　<strong>日期：</strong>＿＿＿＿＿＿＿＿
+  </div>
+
+  <div class="nav no-print">
+    <button data-go="1">第一關｜眼力王</button>
+    <button data-go="2">第二關｜配對王</button>
+    <button data-go="3">第三關｜數字大挑戰</button>
+  </div>
+  <div class="senior-fontbar no-print" id="seniorFontBar">
+    <span class="font-label">字體大小</span>
+    <button class="btn" id="fontSmaller" type="button" aria-label="縮小字體">A−</button>
+    <button class="btn primary" id="fontNormal" type="button">標準大字</button>
+    <button class="btn" id="fontLarger" type="button" aria-label="放大字體">A＋</button>
+  </div>
+
+  <section class="panel no-print" id="learnerGuide">
+    <div class="section-title">
+      <h2 style="font-size:24px">怎麼玩？三步就好</h2>
+      <div class="sub">全部在同一頁，往下做就可以</div>
+    </div>
+    <div class="quick-guide">
+      <div class="guide-card"><strong>① 找不同</strong>直接點選要圈起來的字</div>
+      <div class="guide-card"><strong>② 相反詞連連看</strong>先點左邊，再點右邊，自動畫線</div>
+      <div class="guide-card"><strong>③ 找數字</strong>點題目，再依序點數字格</div>
+    </div>
+    <div class="progressbar">
+      <span class="progress-pill" id="prog1">第一關 ○</span>
+      <span class="progress-pill" id="prog2">第二關 ○</span>
+      <span class="progress-pill" id="prog3">第三關 ○</span>
+    </div>
+    <div class="autosave-note">作答會暫存在這台裝置的目前瀏覽器中；重新整理頁面也會盡量保留。</div>
+  </section>
+
+  <section class="panel teacher-only teacher-head no-print" id="teacherDashboard">
+    <div class="section-title">
+      <h2 style="font-size:24px">教師快速導覽</h2>
+      <div class="sub">修改後按各區「儲存」；系統會立即重算答案、盤面檢查與教案摘要</div>
+    </div>
+    <p class="footer-note"><strong>教師模式連動：</strong>第一關、第二關、第三關或教案內容修改後，請按該區的「儲存」。儲存完成會自動更新教師答案、數字盤檢查及教案摘要。公開給長輩使用時仍只會看到長輩作答畫面。</p>
+    <div class="teacher-jump">
+      <button class="btn" data-jump="#lessonPlanSection">教案說明</button>
+      <button class="btn" data-jump=".stage[data-stage='1']">第一關設定</button>
+      <button class="btn" data-jump=".stage[data-stage='2']">第二關設定</button>
+      <button class="btn" data-jump=".stage[data-stage='3']">第三關設定</button>
+      <button class="btn" data-jump="#gridValidation">檢查數字答案</button>
+      <button class="btn" data-jump="#printControlSection">列印設定</button>
+    </div>
+  </section>
+
+  <section class="panel stage" data-stage="1">
+    <div class="section-title">
+      <h2>第一關｜眼力王</h2>
+      <div class="sub">視覺搜尋・持續注意・細節辨識</div>
+    </div>
+    <p class="instruction">前兩題請依提示找出指定數量的不同字。最後一題會直接告訴你要找哪一個字，請把它全部圈出來，再填寫總共有幾個。</p>
+    <div id="eyeArea"></div>
+    <div class="teacher-only editor-block">
+      <h3>教師編輯｜第一關</h3>
+      <p class="footer-note">設計原則：每題「主要字」一定要比「不同字」多，否則長者無法判斷哪個才是異類。最後一題固定採「指定目標字＋自己找總數」，避免長者不知道哪一個字才是答案。</p>
+      <div id="eyeEditor"></div>
+      <button class="btn primary" id="saveEye">套用第一關修改</button>
+    </div>
+    <div class="teacher-only teacher-answer" id="eyeAnswer"></div>
+  </section>
+
+  <section class="panel stage" data-stage="2">
+    <div class="section-title">
+      <h2>第二關｜相反詞連連看</h2>
+      <div class="sub">語意理解・視覺追蹤・手眼協調・認知轉換</div>
+    </div>
+    <p class="instruction">請把左右兩邊意思相反的詞連起來。線上版先點左邊、再點右邊，會自動畫線；紙本版請直接用筆連線。作答時不立即顯示對錯。</p>
+    <div class="pair-wrap" id="pairWrap">
+      <div class="pair-col" id="leftWords"></div>
+      <div class="pair-mid">請連線</div>
+      <div class="pair-col" id="rightWords"></div>
+      <svg id="pairLines" class="pair-lines" aria-hidden="true"></svg>
+    </div>
+    <div class="feedback" id="pairFeedback"></div>
+    <div class="no-print" style="margin-top:8px">
+      <button class="mini-btn" id="clearPairs">清除第二關配對</button>
+    </div>
+    <div class="teacher-only editor-block">
+      <h3>教師編輯｜第二關</h3>
+      <p class="footer-note">每行格式：左詞=右詞</p>
+      <textarea id="pairEdit" rows="5"></textarea>
+      <button class="btn primary" id="savePairs">套用第二關修改</button>
+    </div>
+    <div class="teacher-only teacher-answer" id="pairAnswer"></div>
+  </section>
+
+  <section class="panel stage" data-stage="3">
+    <div class="section-title">
+      <h2>第三關｜數字大挑戰</h2>
+      <div class="sub">上下、左右、斜線相鄰皆可</div>
+    </div>
+    <p class="instruction" id="gridInstruction">使用同一個數字盤。A～C 找兩數相鄰組合；D 找 3 個排成一直線、彼此相鄰的數字。</p>
+    <div class="grid-wrap"><div class="num-grid" id="numGrid"></div></div>
+    <div class="task-list" id="taskList"></div>
+
+    <div class="teacher-only editor-block">
+      <h3>教師編輯｜第三關</h3>
+      <p class="footer-note">建議先選盤面大小，再直接改格子數字。A～D 用下方簡單設定即可；系統會自動檢查每題是否真的有足夠答案。</p>
+
+      <div class="grid-size-controls">
+        <label>列數（3～8）
+          <input type="number" id="gridRowsEdit" min="3" max="8">
+        </label>
+        <label>欄數（3～8）
+          <input type="number" id="gridColsEdit" min="3" max="8">
+        </label>
+        <button class="btn" id="applyGridSize" type="button">套用盤面大小</button>
+        <button class="btn" id="randomGridBtn" type="button">隨機填入 1～9</button>
+      </div>
+
+      <div id="visualGridEditor"></div>
+
+      <h4 style="margin:16px 0 6px">A／B／C／D 簡單設定</h4>
+      <div id="simpleTaskEditor"></div>
+
+      <details style="margin-top:12px">
+        <summary style="cursor:pointer;font-weight:800">進階設定（JSON）</summary>
+        <div class="edit-grid" style="margin-top:10px">
+          <label>數字盤文字格式
+            <textarea id="gridEdit" rows="6"></textarea>
+          </label>
+          <label>目標設定 JSON
+            <textarea id="taskEdit" rows="6"></textarea>
+          </label>
+        </div>
+      </details>
+
+      <div class="toolbar" style="margin-top:12px">
+        <button class="btn primary" id="saveNum">儲存第三關並重新計算答案</button>
+        <button class="btn" id="validateGridBtn" type="button">檢查盤面答案</button>
+      </div>
+      <div id="gridValidation" class="validation-box">尚未檢查。</div>
+    </div>
+    <div class="teacher-only teacher-answer" id="numAnswer"></div>
+  </section>
+
+  <section class="panel submit-panel no-print" id="submitPanel">
+    <div class="section-title">
+      <h2>完成了嗎？交卷看看</h2>
+      <div class="sub">系統會依目前教師設定的答案自動批改</div>
+    </div>
+    <div class="toolbar">
+      <button class="btn primary" id="submitQuiz">交卷批改成績</button>
+      <button class="btn" id="clearGrade">清除成績繼續作答</button>
+    </div>
+    <div class="score-box" id="scoreBox">
+      <div class="score-big" id="scoreBig"></div>
+      <div class="score-detail" id="scoreDetail"></div>
+    </div>
+  </section>
+
+  <section class="panel teacher-only" id="lessonPlanSection">
+    <div class="section-title">
+      <h2>教師教案說明</h2>
+      <div class="sub">可新增、修改；遊戲規則也在這裡說清楚</div>
+    </div>
+    <div class="edit-grid">
+      <label>活動名稱<input id="lpName"></label>
+      <label>活動對象<input id="lpAudience"></label>
+      <label>活動時間<input id="lpDuration"></label>
+      <label>活動材料<input id="lpMaterials"></label>
+      <label>活動方式<input id="lpMethod"></label>
+      <label>設計目的／活動目標<textarea id="lpPurpose" rows="4"></textarea></label>
+      <label>遊戲規則<textarea id="lpRules" rows="8"></textarea></label>
+      <label>可以幫助長者什麼？<textarea id="lpBenefits" rows="7"></textarea></label>
+      <label>教師帶領重點<textarea id="lpGuidance" rows="7"></textarea></label>
+    </div>
+    <button class="btn primary" id="saveLessonPlan">儲存教案說明</button>
+    <div class="teacher-answer" style="display:block;margin-top:14px">
+      <strong>目前題目設定｜自動同步摘要</strong>
+      <div id="autoRuleSummary" style="margin-top:8px;line-height:1.7"></div>
+    </div>
+  </section>
+
+  <section class="panel teacher-only" id="printControlSection">
+    <div class="section-title">
+      <h2>列印／另存 PDF</h2>
+      <div class="sub">題目、答案、教案分開輸出，不會混在一起</div>
+    </div>
+
+    <div class="print-options">
+      <label class="checkrow"><input type="checkbox" class="print-stage" value="1" checked> 第一關｜眼力王</label>
+      <label class="checkrow"><input type="checkbox" class="print-stage" value="2" checked> 第二關｜配對王</label>
+      <label class="checkrow"><input type="checkbox" class="print-stage" value="3" checked> 第三關｜數字大挑戰</label>
+    </div>
+
+    <div class="print-preview-box">
+      <strong>① 長輩題目版</strong>
+      <p class="footer-note">不含答案、不含教師工具。可選三關合併一張 A4，或一關一頁。</p>
+      <div class="toolbar">
+        <button class="btn primary" data-print-action="senior-two">樂齡大字 2 頁｜連連看不分頁（推薦）</button>
+        <button class="btn" data-print-action="student-onepage">三關合併 A4 一頁</button>
+        <button class="btn" data-print-action="student-pages">所選關卡一關一頁</button>
+      </div>
+    </div>
+
+    <div class="print-preview-box">
+      <strong>② 教師答案版</strong>
+      <p class="footer-note">只列印所選關卡＋依目前題目自動重算的教師答案。</p>
+      <div class="toolbar">
+        <button class="btn" data-print-action="answer">列印教師答案版</button>
+      </div>
+    </div>
+
+    <div class="print-preview-box">
+      <strong>③ 教師完整教案</strong>
+      <p class="footer-note">只列印活動名稱、對象、時間、材料、設計目的、遊戲規則、訓練能力與帶領重點。</p>
+      <div class="toolbar">
+        <button class="btn" data-print-action="lesson">列印教師教案</button>
+      </div>
+    </div>
+
+    <p class="footer-note"><strong>另存 PDF：</strong>按上面的列印按鈕後，在瀏覽器列印視窗將「目的地」改成「另存為 PDF」。</p>
+  </section>
+
+  <section class="panel teacher-only">
+    <div class="section-title">
+      <h2>教師工具</h2>
+      <div class="sub">不會出現在長輩作答版</div>
+    </div>
+    <div class="toolbar">
+      <button class="btn" id="showAnswers">顯示教師答案</button>
+      <button class="btn" id="hideAnswers">暫時隱藏教師答案</button>
+      <button class="btn" id="exportBtn">匯出設定</button>
+      <label class="btn">匯入設定<input type="file" id="importFile" accept=".json" hidden></label>
+      <button class="btn danger" id="factoryReset">恢復預設題目</button>
+    </div>
+    <p class="footer-note">建議考核時：長輩只看作答模式；老師需要核對時再切教師模式。列印／另存 PDF 會自動隱藏工具列。</p>
+  </section>
+  <section class="panel print-only lesson-plan-print" id="lessonPlanPrint" style="display:none">
+    <div class="section-title"><h2>教師教案說明</h2></div>
+    <div id="lessonPlanPrintContent"></div>
+  </section>
+</div>
+
+<script>
+const DEFAULT = {
+  title:"腦力開機！銀髮三關挑戰",
+  subtitle:"看仔細・連一連・找數字",
+  lessonPlan:{
+    name:"腦力開機！銀髮三關挑戰",
+    audience:"樂齡長者；可依能力給提示或減少題數",
+    duration:"約 5～8 分鐘（考核可示範精華 3～5 分鐘）",
+    materials:"每人活動紙 1 張、粗筆 1 支；不需額外道具",
+    method:"個別紙本挑戰＋教師口語互動",
+    purpose:"在短時間內結合視覺搜尋、語意配對、數字心算與規則轉換，增加參與感與成功感。",
+    rules:"1. 第一關｜眼力王：依提示找出不同的字；前兩題告知數量，最後一題不提示數量。\n2. 第二關｜配對王：將左右兩側意思相反的詞配對。\n3. 第三關｜數字尋寶：使用同一個 5×5 數字盤；上下、左右、斜線相鄰皆可。A～C找兩數組合，D找3個一直線相鄰數字。\n4. 不比速度、不排名；能力較弱者完成部分題目即可，能力較佳者再挑戰進階題。",
+    benefits:"第一關：視覺搜尋、專注力、細節辨識、手眼協調。\n第二關：語意理解、語言記憶、邏輯配對、認知轉換。\n第三關：簡單心算、工作記憶、抑制控制、認知彈性、問題解決與空間搜尋。",
+    guidance:"答錯時不急著說「錯」，可問「再看看旁邊還有沒有別的？」；卡住時採階梯式提示：先提醒目標 → 再提示方向 → 最後才提示其中一個數字。"
+  },
+  eye:[
+    {label:"圈出2個不同字", base:"士", odd:"土", seq:["士","土","士","士","土","士","士","士"]},
+    {label:"圈出3個不同字", base:"日", odd:"目", seq:["日","目","日","日","目","日","日","目","日"]},
+    {label:"挑戰題", base:"太", odd:"犬", seq:["太","犬","太","太","犬","太","太","犬","太","太"]}
+  ],
+  pairs:[
+    {left:"大",right:"小"},
+    {left:"快",right:"慢"},
+    {left:"冷",right:"熱"}
+  ],
+  gridRows:5,
+  gridCols:5,
+  grid:[
+    [4,3,5,9,2],
+    [6,2,1,7,8],
+    [3,9,5,6,8],
+    [1,7,5,8,4],
+    [6,2,9,3,7]
+  ],
+  tasks:[
+    {id:"A", type:"pair", target:8, groups:3, label:"找3組＝8"},
+    {id:"B", type:"pair", target:14, groups:2, label:"找2組＝14"},
+    {id:"C", type:"pair", target:17, groups:1, label:"找1組＝17"},
+    {id:"D", type:"line3", target:20, groups:1, label:"找3個一直線相鄰數字，三數＝20"}
+  ]
+};
+
+let data = loadData();
+let teacher=false;
+let answersVisible=false;
+let currentStage=1;
+let selectedPairLeft=null;
+let paired = new Set(); // 保留相容：正確配對集合
+let pairAnswers = new Map(); // 實際作答：left -> right，不提前判斷對錯
+let activeTaskIndex=0;
+let activeSlotIndex=null;
+let numPick=[];
+let gradeResult=null;
+let teacherDirty=false;
+
+function setTeacherDirty(v=true){
+  teacherDirty=!!v;
+  const el=document.getElementById("syncState");
+  if(!el)return;
+  el.classList.toggle("dirty",teacherDirty);
+  el.classList.toggle("ok",!teacherDirty);
+  el.textContent=teacherDirty?"｜有尚未儲存的修改":"｜目前設定已同步";
+}
+function syncTeacherPanels(){
+  data=normalizeData(data);
+  saveData();
+  answersVisible=true;
+  renderTeacherAnswers();
+  renderAutoRuleSummary();
+  renderLessonPlanPrint();
+  renderGridValidation();
+  setTeacherDirty(false);
+}
+
+// 學員作答狀態：即使畫面重新 render，也不會消失
+let answerState = {
+  eyeSelections: data.eye.map(()=>[]),
+  eyeCount: "",
+  numeric: data.tasks.map(t=>Array.from({length:Math.max(1,Number(t.groups)||1)},()=>({value:"",cells:[]})))
+};
+
+function saveWorkSession(){
+  try{
+    sessionStorage.setItem("brainBootWork",JSON.stringify({
+      answerState,
+      pairAnswers:[...pairAnswers.entries()]
+    }));
+  }catch(e){}
+}
+function loadWorkSession(){
+  try{
+    const raw=sessionStorage.getItem("brainBootWork");
+    if(!raw)return;
+    const obj=JSON.parse(raw);
+    if(obj?.answerState) answerState=obj.answerState;
+    if(Array.isArray(obj?.pairAnswers)) pairAnswers=new Map(obj.pairAnswers);
+    paired.clear();
+    for(const [l,r] of pairAnswers.entries()){
+      const correct=data.pairs.find(p=>p.left===l)?.right;
+      if(r===correct) paired.add(`${l}=${r}`);
+    }
+  }catch(e){}
+}
+function clearWorkSession(){
+  try{sessionStorage.removeItem("brainBootWork")}catch(e){}
+}
+function syncAnswerStateShape(){
+  if(!answerState || typeof answerState!=="object"){
+    answerState={eyeSelections:[],eyeCount:"",numeric:[]};
+  }
+  while(answerState.eyeSelections.length<data.eye.length) answerState.eyeSelections.push([]);
+  answerState.eyeSelections=answerState.eyeSelections.slice(0,data.eye.length);
+  while(answerState.numeric.length<data.tasks.length) answerState.numeric.push([]);
+  answerState.numeric=answerState.numeric.slice(0,data.tasks.length);
+  data.tasks.forEach((t,ti)=>{
+    const n=Math.max(1,Number(t.groups)||1);
+    while(answerState.numeric[ti].length<n) answerState.numeric[ti].push({value:"",cells:[]});
+    answerState.numeric[ti]=answerState.numeric[ti].slice(0,n);
+  });
+}
+
+function clone(x){return JSON.parse(JSON.stringify(x))}
+function loadData(){
+  try{
+    const s=localStorage.getItem("brainBootData");
+    return normalizeData(s?JSON.parse(s):clone(DEFAULT));
+  }catch(e){return clone(DEFAULT)}
+}
+function saveData(){data=normalizeData(data);localStorage.setItem("brainBootData",JSON.stringify(data))}
+function esc(s){return String(s).replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#039;"}[m]))}
+
+function taskDisplayLabel(t){
+  const target = Number(t.target)||0;
+  const groups = Math.max(1, Number(t.groups)||1);
+  if(t.type==="line3"){
+    return groups===1
+      ? `找3個一直線相鄰數字，三數＝${target}`
+      : `找${groups}組，每組3個一直線相鄰數字，三數＝${target}`;
+  }
+  return `找${groups}組＝${target}`;
+}
+
+function normalizeData(raw){
+  const d = raw && typeof raw==="object" ? raw : clone(DEFAULT);
+
+  d.title = String(d.title || DEFAULT.title);
+  d.subtitle = String(d.subtitle || DEFAULT.subtitle);
+  const lpDefault=DEFAULT.lessonPlan;
+  d.lessonPlan = Object.assign({}, lpDefault, d.lessonPlan||{});
+  Object.keys(lpDefault).forEach(k=>d.lessonPlan[k]=String(d.lessonPlan[k]??lpDefault[k]));
+
+  if(!Array.isArray(d.eye) || !d.eye.length) d.eye = clone(DEFAULT.eye);
+  d.eye = d.eye.map((q,i)=>({
+    label:String(q?.label ?? DEFAULT.eye[i]?.label ?? `第${i+1}題`),
+    base:String(q?.base ?? ""),
+    odd:String(q?.odd ?? ""),
+    seq:Array.isArray(q?.seq) ? q.seq.map(String) : String(q?.seq ?? "").trim().split(/\s+/).filter(Boolean)
+  }));
+
+  if(!Array.isArray(d.pairs) || !d.pairs.length) d.pairs = clone(DEFAULT.pairs);
+  d.pairs = d.pairs.map(p=>({left:String(p?.left||""),right:String(p?.right||"")})).filter(p=>p.left&&p.right);
+
+  let rows=Number(d.gridRows || d.grid?.length || DEFAULT.gridRows || 5);
+  let cols=Number(d.gridCols || d.grid?.[0]?.length || DEFAULT.gridCols || 5);
+  rows=Math.max(3,Math.min(8,Math.round(rows)));
+  cols=Math.max(3,Math.min(8,Math.round(cols)));
+  d.gridRows=rows; d.gridCols=cols;
+  if(!Array.isArray(d.grid) || d.grid.length!==rows || d.grid.some(r=>!Array.isArray(r)||r.length!==cols)){
+    const base=Array.isArray(d.grid)?d.grid:[];
+    d.grid=Array.from({length:rows},(_,r)=>Array.from({length:cols},(_,c)=>{
+      const old=Number(base?.[r]?.[c]);
+      if(Number.isFinite(old)) return old;
+      const def=Number(DEFAULT.grid?.[r%DEFAULT.grid.length]?.[c%DEFAULT.grid[0].length]);
+      return Number.isFinite(def)?def:((r+c)%9)+1;
+    }));
+  }
+  d.grid=d.grid.map(r=>r.map(n=>Number(n))).map(r=>r.map(n=>Number.isFinite(n)?n:0));
+
+  if(!Array.isArray(d.tasks) || !d.tasks.length) d.tasks = clone(DEFAULT.tasks);
+  d.tasks = d.tasks.map((t,i)=>({
+    id:String(t?.id ?? ["A","B","C","D"][i] ?? `T${i+1}`),
+    type:t?.type==="line3" ? "line3" : "pair",
+    target:Number(t?.target ?? 0),
+    groups:Math.max(1,Number(t?.groups ?? 1)),
+    label:String(t?.label ?? "")
+  }));
+  // 顯示文字由設定自動產生，避免「題目改了、標題沒跟著改」
+  d.tasks.forEach(t=>t.label=taskDisplayLabel(t));
+  return d;
+}
+
+function updateProgress(){
+  const p1=data.eye.every((q,qi)=>{
+    const expected=q.seq.filter(ch=>ch===q.odd).length;
+    const selected=(answerState.eyeSelections?.[qi]||[]).length;
+    if(qi===data.eye.length-1) return selected===expected && String(answerState.eyeCount)!=="";
+    return selected===expected;
+  });
+  const p2=data.pairs.length>0 && pairAnswers.size===data.pairs.length;
+  const p3=data.tasks.every((t,ti)=>{
+    const need=Math.max(1,Number(t.groups)||1);
+    const slots=answerState.numeric?.[ti]||[];
+    return slots.length>=need && slots.slice(0,need).every(s=>s?.value);
+  });
+  [[1,p1],[2,p2],[3,p3]].forEach(([i,done])=>{
+    const el=document.getElementById("prog"+i);
+    if(!el)return;
+    el.classList.toggle("done",done);
+    el.textContent=`第${i}關 ${done?"✓":"○"}`;
+  });
+}
+let seniorScale=1;
+function applySeniorScale(scale){
+  seniorScale=Math.max(.9,Math.min(1.25,Number(scale)||1));
+  document.documentElement.style.setProperty("--senior-scale",seniorScale);
+  try{localStorage.setItem("brainBootSeniorScale",String(seniorScale));}catch(e){}
+}
+function loadSeniorScale(){
+  try{
+    const s=Number(localStorage.getItem("brainBootSeniorScale"));
+    if(s) seniorScale=Math.max(.9,Math.min(1.25,s));
+  }catch(e){}
+  applySeniorScale(seniorScale);
+}
+function render(){
+  syncAnswerStateShape();
+  document.getElementById("pageTitle").textContent=data.title;
+  document.getElementById("pageSubtitle").textContent=data.subtitle;
+  document.getElementById("app").classList.toggle("mode-teacher",teacher);
+  document.getElementById("modeBadge").textContent=teacher?"教師模式":"長輩作答模式";
+  document.getElementById("teacherBtn").textContent=teacher?"返回長輩版":"教師模式";
+  document.getElementById("teacherBtn").setAttribute("aria-expanded",teacher?"true":"false");
+  if(teacher) answersVisible=true;
+  document.querySelectorAll(".stage").forEach(s=>s.style.display="block");
+  renderEye();
+  renderPairs();
+  renderGrid();
+  renderEditors();
+  renderTeacherAnswers();
+  updateProgress();
+}
+
+function renderEye(){
+  const area=document.getElementById("eyeArea");
+  area.innerHTML="";
+  data.eye.forEach((q,qi)=>{
+    const card=document.createElement("div"); card.className="question-card";
+    const row=document.createElement("div"); row.className="eye-row";
+    const lab=document.createElement("div"); lab.className="eye-label";
+    lab.textContent = qi===data.eye.length-1
+      ? `挑戰題｜請圈出所有「${q.odd}」`
+      : q.label;
+    const strip=document.createElement("div"); strip.className="char-strip";
+    q.seq.forEach((ch,ci)=>{
+      const span=document.createElement("button");
+      span.className="char";
+      span.style.border="0"; span.style.background="transparent";
+      span.textContent=ch;
+      span.dataset.q=qi; span.dataset.i=ci;
+      span.dataset.char=ch;
+      if(answerState.eyeSelections[qi]?.includes(ci)) span.classList.add("marked");
+      span.addEventListener("click",()=>{
+        const arr=answerState.eyeSelections[qi]||[];
+        const p=arr.indexOf(ci);
+        if(p>=0) arr.splice(p,1); else arr.push(ci);
+        answerState.eyeSelections[qi]=arr;
+        span.classList.toggle("marked");
+        clearGrade(); saveWorkSession(); updateProgress();
+      });
+      strip.appendChild(span);
+    });
+    row.append(lab,strip); card.appendChild(row);
+    if(qi===data.eye.length-1){
+      const countWrap=document.createElement("div");
+      countWrap.className="answer-line";
+      countWrap.style.marginTop="10px";
+      countWrap.innerHTML=`<label style="font-size:18px;font-weight:800">我一共找到「${q.odd}」
+        <input class="answer-input eye-count-input" type="number" min="0" placeholder="填數量" value="${esc(answerState.eyeCount||"")}"> 個
+      </label>`;
+      card.appendChild(countWrap);
+      const countInput=countWrap.querySelector(".eye-count-input");
+      countInput.addEventListener("input",()=>{answerState.eyeCount=countInput.value;clearGrade();saveWorkSession();updateProgress();});
+    }
+    area.appendChild(card);
+  });
+}
+
+function renderPairs(){
+  const L=document.getElementById("leftWords");
+  const R=document.getElementById("rightWords");
+  if(!L||!R)return;
+
+  L.innerHTML="";
+  R.innerHTML="";
+  const rights=data.pairs.map(p=>p.right).slice().reverse();
+
+  data.pairs.forEach(p=>{
+    const b=document.createElement("button");
+    b.className="word-chip left-chip";
+    b.textContent=p.left;
+    b.dataset.pairLeft=p.left;
+
+    if(pairAnswers.has(p.left)) b.style.background="#eef2f6";
+
+    b.onclick=()=>{
+      selectedPairLeft=p.left;
+      document.querySelectorAll("#leftWords .word-chip").forEach(x=>x.classList.remove("selected"));
+      b.classList.add("selected");
+      const fb=document.getElementById("pairFeedback");
+      if(fb){
+        fb.className="feedback";
+        fb.textContent=`已選「${p.left}」，請再選右邊一個詞。`;
+      }
+    };
+    L.appendChild(b);
+  });
+
+  rights.forEach(word=>{
+    const b=document.createElement("button");
+    b.className="word-chip right-chip";
+    b.textContent=word;
+    b.dataset.pairRight=word;
+
+    if([...pairAnswers.values()].includes(word)) b.style.background="#eef2f6";
+
+    b.onclick=()=>{
+      if(!selectedPairLeft){
+        const fb=document.getElementById("pairFeedback");
+        if(fb){
+          fb.className="feedback";
+          fb.textContent="請先選左邊一個詞。";
+        }
+        return;
+      }
+
+      // 保持一對一；同一個右側詞若已被使用，先移除舊配對。
+      for(const [left,right] of pairAnswers.entries()){
+        if(right===word && left!==selectedPairLeft){
+          pairAnswers.delete(left);
+        }
+      }
+
+      pairAnswers.set(selectedPairLeft,word);
+
+      paired.clear();
+      for(const [left,right] of pairAnswers.entries()){
+        const correct=data.pairs.find(p=>p.left===left)?.right;
+        if(right===correct) paired.add(`${left}=${right}`);
+      }
+
+      const fb=document.getElementById("pairFeedback");
+      if(fb){
+        fb.className="feedback";
+        fb.textContent="已完成一組連線，可以繼續下一組。";
+      }
+
+      selectedPairLeft=null;
+      saveWorkSession();
+      updateProgress();
+      renderPairs();
+    };
+
+    R.appendChild(b);
+  });
+
+  requestAnimationFrame(renderPairLines);
+}
+
+function renderPairLines(){
+  const wrap=document.getElementById("pairWrap");
+  const svg=document.getElementById("pairLines");
+  if(!wrap||!svg)return;
+
+  const wr=wrap.getBoundingClientRect();
+  if(wr.width<=0||wr.height<=0)return;
+
+  svg.setAttribute("viewBox",`0 0 ${wr.width} ${wr.height}`);
+  svg.innerHTML="";
+
+  for(const [left,right] of pairAnswers.entries()){
+    const l=[...document.querySelectorAll("[data-pair-left]")]
+      .find(el=>el.dataset.pairLeft===left);
+    const r=[...document.querySelectorAll("[data-pair-right]")]
+      .find(el=>el.dataset.pairRight===right);
+    if(!l||!r)continue;
+
+    const lr=l.getBoundingClientRect();
+    const rr=r.getBoundingClientRect();
+
+    const line=document.createElementNS("http://www.w3.org/2000/svg","line");
+    line.setAttribute("x1",lr.right-wr.left);
+    line.setAttribute("y1",lr.top+lr.height/2-wr.top);
+    line.setAttribute("x2",rr.left-wr.left);
+    line.setAttribute("y2",rr.top+rr.height/2-wr.top);
+    svg.appendChild(line);
+  }
+}
+
+window.addEventListener("resize",()=>requestAnimationFrame(renderPairLines));
+
+function renderGrid(){
+  const grid=document.getElementById("numGrid");
+  grid.innerHTML="";
+  const rows=data.grid.length, cols=data.grid[0].length;
+  const available=teacher?330:Math.min(560,Math.max(330,window.innerWidth-80));
+  const cellSize=Math.max(46,Math.min(76,Math.floor(available/cols)));
+  grid.style.gridTemplateColumns=`repeat(${cols},${cellSize}px)`;
+  grid.style.width="max-content";
+  document.getElementById("gridInstruction").textContent=
+    `使用同一個 ${rows}×${cols} 數字盤。A～C 找兩數相鄰組合；D 找 3 個排成一直線、彼此相鄰的數字。`;
+  data.grid.flat().forEach((n,idx)=>{
+    const c=document.createElement("button");
+    c.className="num-cell"; c.textContent=n; c.dataset.idx=idx;
+    c.style.width=cellSize+"px"; c.style.height=Math.max(42,cellSize-6)+"px";
+    c.style.padding="0"; c.style.borderTop="0"; c.style.borderLeft="0";
+    const rr=Math.floor(idx/cols), cc=idx%cols;
+    c.style.borderRight = cc===cols-1 ? "0" : "1px solid #304b8a";
+    c.style.borderBottom = rr===rows-1 ? "0" : "1px solid #304b8a";
+    c.onclick=()=>handleNumCellClick(idx);
+    grid.appendChild(c);
+  });
+
+  const list=document.getElementById("taskList");
+  list.innerHTML="";
+  data.tasks.forEach((t,ti)=>{
+    const div=document.createElement("div");
+    div.className="task"+(ti===activeTaskIndex?" active-task":"");
+    div.dataset.taskIndex=ti;
+    div.onclick=(ev)=>{
+      if(ev.target.closest("button,input")) return;
+      activeTaskIndex=ti; activeSlotIndex=null; numPick=[]; renderGrid();
+    };
+    const slotCount = Math.max(1, Number(t.groups)||1);
+    const slots = Array.from({length:slotCount},(_,si)=>{
+      const st=answerState.numeric?.[ti]?.[si]||{value:"",cells:[]};
+      return `<span style="display:inline-flex;align-items:center;gap:4px">
+        <input class="answer-input num-answer ${st.value?"autofilled":""}" data-task="${ti}" data-slot="${si}" data-cells="${(st.cells||[]).join(",")}" value="${esc(st.value||"")}" placeholder="${t.type==="line3" ? "例：7＋5＋8" : "例：3＋5"}" readonly>
+        <button type="button" class="mini-btn no-print clear-one-answer" data-clear-task="${ti}" data-clear-slot="${si}" title="只清除此組">×</button>
+      </span>`;
+    }).join("");
+    const printHint = t.type==="line3"
+      ? `提示：找 3 個排成一直線、彼此相鄰的數字，三數合計＝${Number(t.target)}；橫、直、斜線都可以。`
+      : `提示：找彼此相鄰的兩個數字，兩數合計＝${Number(t.target)}；上下、左右、斜線都可以。`;
+    div.innerHTML=`<strong>${esc(t.id)}｜${esc(taskDisplayLabel(t))}</strong>
+      <div class="print-task-hint">${esc(printHint)}</div>
+      <div class="task-status">${ti===activeTaskIndex?"👉 目前作答這一題：直接點上方數字即可":"點這個題目框即可切換作答"}</div>
+      <div class="answer-line" style="width:100%">${slots}</div>
+      <div>
+        <button class="btn no-print" data-hint="${ti}">提示</button>
+        <button class="mini-btn no-print" data-clear-task="${ti}">清除此題</button>
+      </div>
+      <div class="hintbox" id="hint-${ti}"></div>`;
+    list.appendChild(div);
+  });
+  document.querySelectorAll(".num-answer").forEach(inp=>{
+    inp.onclick=(ev)=>{
+      ev.stopPropagation();
+      activeTaskIndex=+inp.dataset.task;
+      activeSlotIndex=+inp.dataset.slot;
+      numPick=[];
+      document.querySelectorAll(".task").forEach(x=>x.classList.remove("active-task"));
+      inp.closest(".task")?.classList.add("active-task");
+      repaintNumPick();
+    };
+  });
+  document.querySelectorAll("[data-hint]").forEach(btn=>btn.onclick=(ev)=>{ev.stopPropagation();showHint(+btn.dataset.hint)});
+  document.querySelectorAll(".clear-one-answer").forEach(btn=>btn.onclick=(ev)=>{
+    ev.stopPropagation();
+    clearNumericAnswer(+btn.dataset.clearTask,+btn.dataset.clearSlot);
+  });
+  document.querySelectorAll("[data-clear-task]:not(.clear-one-answer)").forEach(btn=>btn.onclick=(ev)=>{
+    ev.stopPropagation(); clearNumericTask(+btn.dataset.clearTask);
+  });
+  repaintNumPick();
+}
+
+
+function areAdjacentIndices(indices){
+  if(indices.length!==2) return false;
+  const cols=data.grid[0].length;
+  const [a,b]=indices.map(i=>[Math.floor(i/cols),i%cols]);
+  return Math.max(Math.abs(a[0]-b[0]),Math.abs(a[1]-b[1]))===1;
+}
+function areStraightLine3(indices){
+  if(indices.length!==3) return false;
+  const cols=data.grid[0].length;
+  const pts=indices.map(i=>[Math.floor(i/cols),i%cols]).sort((a,b)=>a[0]-b[0]||a[1]-b[1]);
+  // try every point ordering around a possible middle point
+  for(let m=0;m<3;m++){
+    const mid=pts[m], others=pts.filter((_,i)=>i!==m);
+    const [p1,p2]=others;
+    const dr1=p1[0]-mid[0], dc1=p1[1]-mid[1];
+    const dr2=p2[0]-mid[0], dc2=p2[1]-mid[1];
+    if(dr1===-dr2 && dc1===-dc2 && Math.abs(dr1)<=1 && Math.abs(dc1)<=1 && !(dr1===0&&dc1===0)) return true;
+  }
+  return false;
+}
+function repaintNumPick(){
+  document.querySelectorAll(".num-cell").forEach(c=>c.classList.remove("pick"));
+  numPick.forEach(i=>document.querySelector(`.num-cell[data-idx="${i}"]`)?.classList.add("pick"));
+}
+function numericGroupKey(indices){
+  return indices.slice().sort((a,b)=>a-b).join("-");
+}
+function numericGroupAlreadyUsed(taskIndex,indices,ignoreSlot=null){
+  const key=numericGroupKey(indices);
+  const slots=answerState.numeric?.[taskIndex]||[];
+  return slots.some((st,si)=>{
+    if(ignoreSlot!==null && Number(si)===Number(ignoreSlot)) return false;
+    if(!st?.cells?.length) return false;
+    return numericGroupKey(st.cells)===key;
+  });
+}
+function handleNumCellClick(idx){
+  const t=data.tasks[activeTaskIndex];
+  if(!t) return;
+  const needed=t.type==="line3"?3:2;
+  const pos=numPick.indexOf(idx);
+  if(pos>=0){
+    numPick.splice(pos,1); repaintNumPick(); return;
+  }
+  numPick.push(idx); repaintNumPick();
+  if(numPick.length<needed) return;
+  if(numPick.length>needed){numPick=[idx]; repaintNumPick(); return;}
+  const structurallyValid=t.type==="line3"?areStraightLine3(numPick):areAdjacentIndices(numPick);
+  if(!structurallyValid){
+    alert(t.type==="line3"
+      ?"這3個數字要排成一直線，而且彼此相鄰喔！請重新選。"
+      :"這兩個數字要彼此相鄰喔！請重新選。");
+    numPick=[]; repaintNumPick(); return;
+  }
+  const vals=numPick.map(i=>data.grid.flat()[i]);
+  if(numericGroupAlreadyUsed(activeTaskIndex,numPick,activeSlotIndex)){
+    alert("這一組答案在同一題已經選過了，請換另一組不同位置的答案。");
+    numPick=[]; repaintNumPick(); return;
+  }
+  const inputs=[...document.querySelectorAll(`.num-answer[data-task="${activeTaskIndex}"]`)];
+  let targetInput = activeSlotIndex!==null
+    ? inputs.find(x=>Number(x.dataset.slot)===Number(activeSlotIndex))
+    : inputs.find(x=>!x.value);
+  if(targetInput && targetInput.value && activeSlotIndex===null){
+    targetInput=inputs.find(x=>!x.value);
+  }
+  if(!targetInput || targetInput.value){
+    alert("這一題的答案框已經填滿；如要重做，請按「清除此題」。");
+    numPick=[]; repaintNumPick(); return;
+  }
+  targetInput.value=vals.join("＋");
+  targetInput.dataset.cells=numPick.join(",");
+  targetInput.classList.add("autofilled");
+  const ti=Number(targetInput.dataset.task), si=Number(targetInput.dataset.slot);
+  answerState.numeric[ti][si]={value:targetInput.value,cells:numPick.slice()};
+  clearGrade(); saveWorkSession(); updateProgress();
+  activeSlotIndex=null;
+  numPick=[]; repaintNumPick();
+}
+function clearNumericAnswer(taskIndex,slotIndex){
+  const input=document.querySelector(`.num-answer[data-task="${taskIndex}"][data-slot="${slotIndex}"]`);
+  if(input){
+    input.value="";
+    delete input.dataset.cells;
+    input.classList.remove("autofilled");
+    activeTaskIndex=Number(taskIndex);
+    activeSlotIndex=Number(slotIndex);
+  }
+  if(answerState.numeric?.[taskIndex]?.[slotIndex]){
+    answerState.numeric[taskIndex][slotIndex]={value:"",cells:[]};
+  }
+  clearGrade(); saveWorkSession(); updateProgress();
+  numPick=[];
+  repaintNumPick();
+}
+function clearNumericTask(taskIndex){
+  document.querySelectorAll(`.num-answer[data-task="${taskIndex}"]`).forEach(x=>{
+    x.value=""; delete x.dataset.cells; x.classList.remove("autofilled");
+  });
+  if(answerState.numeric?.[taskIndex]){
+    answerState.numeric[taskIndex]=answerState.numeric[taskIndex].map(()=>({value:"",cells:[]}));
+  }
+  clearGrade(); saveWorkSession(); updateProgress();
+  numPick=[];
+  repaintNumPick();
+}
+function setActiveTask(i){
+  activeTaskIndex=Math.max(0,Math.min(i,data.tasks.length-1));
+  numPick=[]; renderGrid();
+}
+
+function showHint(i){
+  const t=data.tasks[i], box=document.getElementById("hint-"+i);
+  const step=+(box.dataset.step||0);
+  let hints=[];
+  if(t.type==="pair"){
+    hints=[
+      `先記住目標：兩個相鄰數字加起來要等於 ${t.target}。`,
+      "可以看上下、左右、斜線，相鄰都算。",
+      "先找一個比較大的數，再想還差多少。"
+    ];
+  }else{
+    hints=[
+      `這次不是兩個，是 3 個數字，總和要等於 ${t.target}。`,
+      "3個數字要排成一直線，而且彼此相鄰。",
+      "可以找橫線、直線或斜線。"
+    ];
+  }
+  box.textContent=hints[Math.min(step,hints.length-1)];
+  box.classList.add("show");
+  box.dataset.step=Math.min(step+1,hints.length-1);
+}
+
+function getPairSolutions(target){
+  const g=data.grid, rows=g.length, cols=g[0].length;
+  const dirs=[[1,0],[0,1],[1,1],[1,-1]];
+  const out=[], seen=new Set();
+  for(let r=0;r<rows;r++)for(let c=0;c<cols;c++){
+    for(const [dr,dc] of dirs){
+      const r2=r+dr,c2=c+dc;
+      if(r2>=0&&r2<rows&&c2>=0&&c2<cols&&g[r][c]+g[r2][c2]===Number(target)){
+        const ids=[r*cols+c,r2*cols+c2].sort((a,b)=>a-b);
+        const key=ids.join("-");
+        if(!seen.has(key)){
+          seen.add(key);
+          out.push({vals:[g[r][c],g[r2][c2]], idx:[r*cols+c,r2*cols+c2]});
+        }
+      }
+    }
+  }
+  return out;
+}
+function getLine3Solutions(target){
+  const g=data.grid, rows=g.length, cols=g[0].length;
+  const dirs=[[1,0],[0,1],[1,1],[1,-1]], out=[], seen=new Set();
+  for(let r=0;r<rows;r++)for(let c=0;c<cols;c++){
+    for(const [dr,dc] of dirs){
+      const pts=[[r,c],[r+dr,c+dc],[r+2*dr,c+2*dc]];
+      if(pts.every(([rr,cc])=>rr>=0&&rr<rows&&cc>=0&&cc<cols)){
+        const vals=pts.map(([rr,cc])=>g[rr][cc]);
+        if(vals.reduce((a,b)=>a+b,0)===Number(target)){
+          const idx=pts.map(([rr,cc])=>rr*cols+cc);
+          const key=idx.slice().sort((a,b)=>a-b).join("-");
+          if(!seen.has(key)){
+            seen.add(key);
+            out.push({vals,idx});
+          }
+        }
+      }
+    }
+  }
+  return out;
+}
+
+function renderTeacherAnswers(){
+  document.getElementById("eyeAnswer").style.display=answersVisible?"block":"none";
+  document.getElementById("pairAnswer").style.display=answersVisible?"block":"none";
+  document.getElementById("numAnswer").style.display=answersVisible?"block":"none";
+
+  document.getElementById("eyeAnswer").innerHTML="<strong>教師答案（依目前題目自動統計）：</strong><br>"+
+    data.eye.map((q,i)=>{
+      const oddCount=q.seq.filter(x=>x===q.odd).length;
+      const baseCount=q.seq.filter(x=>x===q.base).length;
+      const warning = oddCount>=baseCount
+        ? ' <span style="color:#a23b2a;font-weight:800">⚠ 不同字數量不應大於或等於主要字，建議調整字列。</span>'
+        : '';
+      const action = i===data.eye.length-1
+        ? `題目指定找「${esc(q.odd)}」：應全部圈出，並在數量框填 ${oddCount}。`
+        : `應圈出 ${oddCount} 個「${esc(q.odd)}」。`;
+      return `第${i+1}題：主要字「${esc(q.base)}」${baseCount}個；不同字「${esc(q.odd)}」${oddCount}個。${action}${warning}`;
+    }).join("<br>");
+  document.getElementById("pairAnswer").innerHTML="<strong>教師答案：</strong><br>"+
+    data.pairs.map(p=>`${esc(p.left)} ↔ ${esc(p.right)}`).join("　｜　");
+
+  const parts=data.tasks.map(t=>{
+    const sols=t.type==="pair"?getPairSolutions(t.target):getLine3Solutions(t.target);
+    const need=Math.max(1,Number(t.groups)||1);
+    const chosen=sols.slice(0,need);
+    const shown=chosen.length
+      ? chosen.map((s,idx)=>`第${idx+1}組：${s.vals.join("＋")}＝${Number(t.target)}`).join("；")
+      : "目前盤面找不到符合答案";
+    const countNote=`盤面共找到 ${sols.length} 組符合`;
+    const warn=sols.length<need
+      ? `<div style="color:#a23b2a;font-weight:800;margin-top:4px">⚠ 題目要求 ${need} 組，但目前盤面只有 ${sols.length} 組，請調整數字盤或目標。</div>`
+      : "";
+    return `<div style="margin:8px 0;padding:8px 10px;border-bottom:1px solid #ddd">
+      <strong>${esc(t.id)}｜${esc(taskDisplayLabel(t))}</strong><br>
+      ${shown}<br>
+      <span style="color:#666">${countNote}</span>
+      ${warn}
+    </div>`;
+  });
+  document.getElementById("numAnswer").innerHTML=
+    "<strong>第三關教師答案卷（依目前教案自動重算）</strong>"+
+    "<div style='margin-top:6px;color:#666'>每一組皆顯示完整加總，方便核對與列印。</div>"+
+    parts.join("");
+
+  document.querySelectorAll(".num-cell").forEach(x=>x.classList.remove("answer"));
+  if(teacher&&answersVisible){
+    const lineTask=data.tasks.find(t=>t.type==="line3");
+    const firstLine=lineTask?getLine3Solutions(lineTask.target)[0]:null;
+    if(firstLine)firstLine.idx.forEach(i=>document.querySelector(`.num-cell[data-idx="${i}"]`)?.classList.add("answer"));
+  }
+}
+
+function renderVisualGridEditor(){
+  const box=document.getElementById("visualGridEditor");
+  if(!box)return;
+  const rows=data.grid.length, cols=data.grid[0].length;
+  box.innerHTML=`<div style="font-weight:800;margin-bottom:6px">目前盤面：${rows} × ${cols}</div>`;
+  const grid=document.createElement("div");
+  grid.className="grid-editor-table";
+  grid.style.gridTemplateColumns=`repeat(${cols},52px)`;
+  data.grid.forEach((row,r)=>row.forEach((val,c)=>{
+    const inp=document.createElement("input");
+    inp.type="number"; inp.value=val;
+    inp.dataset.gridR=r; inp.dataset.gridC=c;
+    inp.title=`第 ${r+1} 列、第 ${c+1} 欄`;
+    grid.appendChild(inp);
+  }));
+  box.appendChild(grid);
+}
+function renderSimpleTaskEditor(){
+  const box=document.getElementById("simpleTaskEditor");
+  if(!box)return;
+  box.innerHTML="";
+  data.tasks.forEach((t,i)=>{
+    const row=document.createElement("div");
+    row.className="task-simple-row";
+    row.innerHTML=`
+      <label>題號<input data-simple-task="${i}" data-key="id" value="${esc(t.id)}"></label>
+      <label>題型
+        <select data-simple-task="${i}" data-key="type">
+          <option value="pair" ${t.type==="pair"?"selected":""}>兩數相鄰</option>
+          <option value="line3" ${t.type==="line3"?"selected":""}>三數一直線</option>
+        </select>
+      </label>
+      <label>目標總和<input type="number" data-simple-task="${i}" data-key="target" value="${Number(t.target)}"></label>
+      <label>要找幾組<input type="number" min="1" data-simple-task="${i}" data-key="groups" value="${Number(t.groups)}"></label>`;
+    box.appendChild(row);
+  });
+}
+function collectVisualGrid(){
+  const rows=Number(document.getElementById("gridRowsEdit").value);
+  const cols=Number(document.getElementById("gridColsEdit").value);
+  const arr=Array.from({length:rows},()=>Array(cols).fill(0));
+  document.querySelectorAll("[data-grid-r]").forEach(inp=>{
+    const r=+inp.dataset.gridR,c=+inp.dataset.gridC,v=Number(inp.value);
+    arr[r][c]=Number.isFinite(v)?v:0;
+  });
+  return arr;
+}
+function collectSimpleTasks(){
+  const tasks=clone(data.tasks);
+  document.querySelectorAll("[data-simple-task]").forEach(el=>{
+    const i=+el.dataset.simpleTask,key=el.dataset.key;
+    tasks[i][key]=(key==="target"||key==="groups")?Number(el.value):el.value;
+  });
+  return tasks;
+}
+function gridValidationReport(){
+  const reports=data.tasks.map(t=>{
+    const sols=t.type==="line3"?getLine3Solutions(t.target):getPairSolutions(t.target);
+    const need=Math.max(1,Number(t.groups)||1);
+    return {id:t.id,label:taskDisplayLabel(t),need,found:sols.length,ok:sols.length>=need,examples:sols.slice(0,need)};
+  });
+  return reports;
+}
+function renderGridValidation(){
+  const box=document.getElementById("gridValidation");
+  if(!box)return;
+  const reports=gridValidationReport();
+  const allOk=reports.every(x=>x.ok);
+  box.innerHTML=`<div class="${allOk?"validation-ok":"validation-warn"}">${allOk?"✓ 目前盤面可完成所有設定題目。":"⚠ 目前至少有一題答案組數不足。"}</div>`+
+    reports.map(r=>{
+      const ex=r.examples.length?r.examples.map(s=>`${s.vals.join("＋")}＝${data.tasks.find(t=>t.id===r.id)?.target}`).join("；"):"無";
+      return `<div style="margin-top:6px"><strong>${esc(r.id)}｜${esc(r.label)}</strong><br>
+        題目需要 ${r.need} 組；盤面實際找到 <strong>${r.found}</strong> 組。
+        <span class="${r.ok?"validation-ok":"validation-warn"}">${r.ok?"可使用":"不足，請修改數字或目標"}</span><br>
+        範例：${esc(ex)}</div>`;
+    }).join("");
+}
+function resizeGrid(rows,cols){
+  rows=Math.max(3,Math.min(8,Math.round(Number(rows)||5)));
+  cols=Math.max(3,Math.min(8,Math.round(Number(cols)||5)));
+  const old=data.grid;
+  data.grid=Array.from({length:rows},(_,r)=>Array.from({length:cols},(_,c)=>{
+    const v=Number(old?.[r]?.[c]);
+    return Number.isFinite(v)?v:((r*cols+c)%9)+1;
+  }));
+  data.gridRows=rows;data.gridCols=cols;
+  answerState.numeric=data.tasks.map(t=>Array.from({length:Math.max(1,Number(t.groups)||1)},()=>({value:"",cells:[]})));
+  clearGrade(); saveWorkSession();
+}
+function randomizeGrid(){
+  data.grid=data.grid.map(row=>row.map(()=>Math.floor(Math.random()*9)+1));
+  answerState.numeric=data.tasks.map(t=>Array.from({length:Math.max(1,Number(t.groups)||1)},()=>({value:"",cells:[]})));
+  clearGrade(); saveWorkSession();
+}
+
+function bindTeacherDirtyListeners(){
+  document.querySelectorAll(
+    "#eyeEditor input,#pairEdit,#gridRowsEdit,#gridColsEdit,#visualGridEditor input,#simpleTaskEditor input,#simpleTaskEditor select,#lessonPlanSection input,#lessonPlanSection textarea"
+  ).forEach(el=>{
+    if(el.dataset.dirtyBound==="1") return;
+    el.dataset.dirtyBound="1";
+    el.addEventListener("input",()=>setTeacherDirty(true));
+    el.addEventListener("change",()=>setTeacherDirty(true));
+  });
+}
+function renderEditors(){
+  const ee=document.getElementById("eyeEditor");
+  ee.innerHTML="";
+  data.eye.forEach((q,i)=>{
+    const wrap=document.createElement("div"); wrap.className="edit-grid"; wrap.style.marginBottom="10px";
+    wrap.innerHTML=`
+      <label>題目提示<input data-eye="${i}" data-key="label" value="${esc(q.label)}"></label>
+      <label>標準字<input data-eye="${i}" data-key="base" value="${esc(q.base)}"></label>
+      <label>不同字<input data-eye="${i}" data-key="odd" value="${esc(q.odd)}"></label>
+      <label>字列（空格分隔）<input data-eye="${i}" data-key="seq" value="${esc(q.seq.join(" "))}"></label>`;
+    ee.appendChild(wrap);
+  });
+  document.getElementById("pairEdit").value=data.pairs.map(p=>`${p.left}=${p.right}`).join("\n");
+  document.getElementById("gridRowsEdit").value=data.grid.length;
+  document.getElementById("gridColsEdit").value=data.grid[0].length;
+  document.getElementById("gridEdit").value=data.grid.map(r=>r.join(" ")).join("\n");
+  document.getElementById("taskEdit").value=JSON.stringify(data.tasks,null,2);
+  renderVisualGridEditor();
+  renderSimpleTaskEditor();
+
+  const lp=data.lessonPlan;
+  const map={lpName:"name",lpAudience:"audience",lpDuration:"duration",lpMaterials:"materials",lpMethod:"method",lpPurpose:"purpose",lpRules:"rules",lpBenefits:"benefits",lpGuidance:"guidance"};
+  Object.entries(map).forEach(([id,key])=>{const el=document.getElementById(id); if(el)el.value=lp[key]||"";});
+  renderLessonPlanPrint();
+  renderAutoRuleSummary();
+
+  renderGridValidation();
+  bindTeacherDirtyListeners();
+}
+
+
+
+function sameIndexSet(a,b){
+  if(a.length!==b.length) return false;
+  const x=a.slice().sort((m,n)=>m-n), y=b.slice().sort((m,n)=>m-n);
+  return x.every((v,i)=>v===y[i]);
+}
+function gradeEye(){
+  const details=[];
+  let correct=0;
+  data.eye.forEach((q,qi)=>{
+    const expected=q.seq.map((ch,i)=>ch===q.odd?i:null).filter(i=>i!==null);
+    const chosen=(answerState.eyeSelections[qi]||[]).map(Number);
+    let ok=sameIndexSet(expected,chosen);
+    if(qi===data.eye.length-1){
+      ok=ok && Number(answerState.eyeCount)===expected.length;
+    }
+    if(ok) correct++;
+    details.push(`${qi===data.eye.length-1 ? `挑戰題｜找「${q.odd}」` : q.label}：${ok?"正確":"再看看"}`);
+  });
+  return {correct,total:data.eye.length,details};
+}
+function gradePairs(){
+  let correct=0;
+  const details=data.pairs.map(p=>{
+    const chosen=pairAnswers.get(p.left);
+    const ok=chosen===p.right;
+    if(ok)correct++;
+    // 交卷後才統計，但仍不逐題公布正確答案，只顯示完成/未正確。
+    return `${p.left}：${chosen ? (ok?"完成":"可再想想") : "尚未配對"}`;
+  });
+  return {correct,total:data.pairs.length,details};
+}
+function gradeNumericInput(input,t,solutions,usedKeys){
+  if(!input.value) return false;
+  const raw=input.dataset.cells;
+  if(raw){
+    const ids=raw.split(",").map(Number);
+    const match=solutions.find(s=>sameIndexSet(s.idx,ids));
+    if(!match)return false;
+    const key=match.idx.slice().sort((a,b)=>a-b).join("-");
+    if(usedKeys.has(key))return false;
+    usedKeys.add(key);
+    return true;
+  }
+  // Fallback for imported/legacy typed text: compare values against a valid solution.
+  const vals=(input.value.match(/-?\d+(?:\.\d+)?/g)||[]).map(Number);
+  const match=solutions.find(s=>{
+    const a=s.vals.slice().sort((m,n)=>m-n), b=vals.slice().sort((m,n)=>m-n);
+    return a.length===b.length && a.every((v,i)=>v===b[i]);
+  });
+  if(!match)return false;
+  const key=match.idx.slice().sort((a,b)=>a-b).join("-");
+  if(usedKeys.has(key))return false;
+  usedKeys.add(key);
+  return true;
+}
+function gradeNumbers(){
+  let correct=0,total=0;
+  const details=[];
+  data.tasks.forEach((t,ti)=>{
+    const solutions=t.type==="line3"?getLine3Solutions(t.target):getPairSolutions(t.target);
+    const states=answerState.numeric?.[ti]||[];
+    const used=new Set();
+    let taskCorrect=0;
+    states.forEach(st=>{
+      total++;
+      if(!st?.value || !st?.cells?.length) return;
+      const ids=st.cells.map(Number);
+      const match=solutions.find(s=>sameIndexSet(s.idx,ids));
+      if(!match) return;
+      const key=match.idx.slice().sort((a,b)=>a-b).join("-");
+      if(used.has(key)) return;
+      used.add(key);
+      correct++; taskCorrect++;
+    });
+    details.push(`${t.id}（${taskDisplayLabel(t)}）：${taskCorrect}/${states.length} 組正確（重複組不計分）`);
+  });
+  return {correct,total,details};
+}
+function submitQuiz(){
+  const e=gradeEye(), p=gradePairs(), n=gradeNumbers();
+  const correct=e.correct+p.correct+n.correct;
+  const total=e.total+p.total+n.total;
+  const percent=total ? Math.round((correct/total)*100) : 0;
+  gradeResult={correct,total,percent,eye:e,pairs:p,numbers:n};
+
+  const box=document.getElementById("scoreBox");
+  box.classList.add("show");
+  document.getElementById("scoreBig").textContent=`總成績 ${percent} 分`;
+
+  const encouragement=percent===100?"全部完成，太厲害了！"
+    : percent>=80?"很棒！再檢查少數還沒完成的地方。"
+    : percent>=60?"已經完成很多了，可以慢慢再試一次。"
+    :"不用急，我們一題一題再找找看。";
+
+  const eyePct=e.total?Math.round(e.correct/e.total*100):0;
+  const pairPct=p.total?Math.round(p.correct/p.total*100):0;
+  const numPct=n.total?Math.round(n.correct/n.total*100):0;
+
+  document.getElementById("scoreDetail").innerHTML=
+    `<div><strong>${encouragement}</strong></div>`+
+    `<div style="margin-top:10px"><strong>總計：</strong>${correct} / ${total} 個作答項目正確</div>`+
+    `<div style="margin-top:8px"><strong>第一關｜眼力王：</strong>${e.correct}/${e.total}（${eyePct}%）</div>`+
+    `<div><strong>第二關｜配對王：</strong>${p.correct}/${p.total}（${pairPct}%）</div>`+
+    `<div><strong>第三關｜數字大挑戰：</strong>${n.correct}/${n.total}（${numPct}%）</div>`+
+    `<div style="margin-top:10px;color:#666">第二關作答過程不提示哪一組對或錯；交卷後只統計分數，不公布正確配對答案。</div>`;
+  box.scrollIntoView({behavior:"smooth",block:"center"});
+}
+function clearPairAnswers(){
+  pairAnswers.clear();
+  paired.clear();
+  selectedPairLeft=null;
+  const fb=document.getElementById("pairFeedback");
+  if(fb){fb.textContent="";fb.className="feedback";}
+  clearGrade(); saveWorkSession(); updateProgress();
+  renderPairs();
+}
+function clearGrade(){
+  gradeResult=null;
+  document.getElementById("scoreBox").classList.remove("show");
+  document.getElementById("scoreBig").textContent="";
+  document.getElementById("scoreDetail").innerHTML="";
+}
+
+function buildAutoRuleSummary(){
+  const eyeSummary=data.eye.map((q,i)=>{
+    const oddCount=q.seq.filter(x=>x===q.odd).length;
+    const baseCount=q.seq.filter(x=>x===q.base).length;
+    const flag=oddCount>=baseCount?"（⚠數量設定需調整）":"";
+    return `第一關第${i+1}題「${q.label}」：主要字「${q.base}」${baseCount}個；不同字「${q.odd}」${oddCount}個${flag}`;
+  }).join("；");
+  const pairSummary=data.pairs.map(p=>`${p.left}↔${p.right}`).join("、");
+  const taskSummary=data.tasks.map(t=>`${t.id}：${taskDisplayLabel(t)}`).join("；");
+  return `第一關：${eyeSummary}<br>第二關：${esc(pairSummary)}<br>第三關：${esc(taskSummary)}`;
+}
+function renderAutoRuleSummary(){
+  const el=document.getElementById("autoRuleSummary");
+  if(el)el.innerHTML=buildAutoRuleSummary();
+}
+function renderLessonPlanPrint(){
+  const lp=data.lessonPlan||{};
+  const rows=[
+    ["活動名稱",lp.name],["活動對象",lp.audience],["活動時間",lp.duration],
+    ["活動材料",lp.materials],["活動方式",lp.method],
+    ["設計目的／活動目標",lp.purpose],["遊戲規則",lp.rules],
+    ["目前題目設定（自動同步）", data.eye.map((q,i)=>`第一關${i+1}：${q.label}／主要字「${q.base}」${q.seq.filter(x=>x===q.base).length}個／不同字「${q.odd}」${q.seq.filter(x=>x===q.odd).length}個`).join("\n")+"\n第二關："+data.pairs.map(p=>`${p.left}↔${p.right}`).join("、")+"\n第三關："+data.tasks.map(t=>`${t.id}：${taskDisplayLabel(t)}`).join("；")],
+    ["可以幫助長者什麼？",lp.benefits],["教師帶領重點",lp.guidance]
+  ];
+  const box=document.getElementById("lessonPlanPrintContent");
+  if(box) box.innerHTML=rows.map(([k,v])=>`<div class="question-card"><strong>${esc(k)}</strong><div class="lesson-note" style="margin-top:7px">${esc(v||"").replace(/\n/g,"<br>")}</div></div>`).join("");
+}
+function saveLessonPlan(){
+  const map={lpName:"name",lpAudience:"audience",lpDuration:"duration",lpMaterials:"materials",lpMethod:"method",lpPurpose:"purpose",lpRules:"rules",lpBenefits:"benefits",lpGuidance:"guidance"};
+  Object.entries(map).forEach(([id,key])=>data.lessonPlan[key]=document.getElementById(id).value.trim());
+  saveData();
+  if(teacher) syncTeacherPanels();
+  else {renderLessonPlanPrint(); renderAutoRuleSummary();}
+  alert("教師教案說明已儲存並同步。");
+}
+
+window.addEventListener("afterprint",()=>{
+  resetPrintClasses();
+  answersVisible=false;
+  renderTeacherAnswers();
+});
+
+
+function selectedPrintStages(){
+  return [...document.querySelectorAll(".print-stage:checked")].map(x=>Number(x.value));
+}
+function resetPrintClasses(){
+  document.body.classList.remove(
+    "print-onepage","print-pages","print-custom","print-teacher","print-lesson",
+    "print-student","print-student-onepage","print-student-pages",
+    "print-answer","print-lesson-only","print-senior-two"
+  );
+  document.querySelectorAll(".stage").forEach(s=>s.classList.remove("print-selected"));
+  const lp=document.getElementById("lessonPlanPrint");
+  if(lp) lp.style.display="none";
+}
+function markSelectedStages(chosen){
+  document.querySelectorAll(".stage").forEach(s=>{
+    s.classList.toggle("print-selected",chosen.includes(Number(s.dataset.stage)));
+  });
+}
+function doPrintSeniorTwo(){
+  resetPrintClasses();
+  markSelectedStages([1,2,3]);
+  document.body.classList.add("print-student","print-senior-two");
+  setTimeout(()=>window.print(),100);
+}
+function doPrintStudentOnePage(){
+  const chosen=selectedPrintStages();
+  if(!chosen.length){alert("請至少選擇一個關卡。");return;}
+  resetPrintClasses();
+  markSelectedStages(chosen);
+  document.body.classList.add("print-student","print-student-onepage");
+  setTimeout(()=>window.print(),80);
+}
+function doPrintStudentPages(){
+  const chosen=selectedPrintStages();
+  if(!chosen.length){alert("請至少選擇一個關卡。");return;}
+  resetPrintClasses();
+  markSelectedStages(chosen);
+  document.body.classList.add("print-student","print-student-pages");
+  setTimeout(()=>window.print(),80);
+}
+function doPrintAnswer(){
+  const chosen=selectedPrintStages();
+  if(!chosen.length){alert("請至少選擇一個關卡。");return;}
+  resetPrintClasses();
+  markSelectedStages(chosen);
+  answersVisible=true;
+  renderTeacherAnswers();
+  document.body.classList.add("print-answer");
+  setTimeout(()=>window.print(),80);
+}
+function doPrintLesson(){
+  resetPrintClasses();
+  renderLessonPlanPrint();
+  const lp=document.getElementById("lessonPlanPrint");
+  if(lp) lp.style.display="block";
+  document.body.classList.add("print-lesson-only");
+  setTimeout(()=>window.print(),80);
+}
+
+document.getElementById("saveEye").onclick=()=>{
+  document.querySelectorAll("[data-eye]").forEach(inp=>{
+    const i=+inp.dataset.eye,k=inp.dataset.key;
+    data.eye[i][k]=k==="seq"?inp.value.trim().split(/\s+/):inp.value.trim();
+  });
+  const problems=[];
+  data.eye.forEach((q,i)=>{
+    const baseCount=q.seq.filter(x=>x===q.base).length;
+    const oddCount=q.seq.filter(x=>x===q.odd).length;
+    if(!q.base || !q.odd) problems.push(`第${i+1}題：主要字與不同字都要設定。`);
+    if(q.base===q.odd) problems.push(`第${i+1}題：主要字與不同字不能相同。`);
+    if(oddCount===0) problems.push(`第${i+1}題：字列中沒有出現不同字「${q.odd}」。`);
+    if(baseCount<=oddCount) problems.push(`第${i+1}題：主要字數量必須多於不同字，否則無法判斷哪個是異類。`);
+  });
+  if(problems.length){
+    alert("第一關設定邏輯需要調整：\n\n"+problems.join("\n"));
+    return;
+  }
+  saveData(); clearGrade(); render();
+  if(teacher){syncTeacherPanels();}
+  else {renderAutoRuleSummary(); renderLessonPlanPrint();}
+};
+document.getElementById("savePairs").onclick=()=>{
+  const lines=document.getElementById("pairEdit").value.split(/\n+/).map(x=>x.trim()).filter(Boolean);
+  const arr=lines.map(line=>{
+    const [left,right]=line.split("=").map(x=>x?.trim());
+    return {left,right};
+  }).filter(x=>x.left&&x.right);
+  if(arr.length){
+    data.pairs=arr;paired.clear();saveData(); clearGrade();render();
+    if(teacher){syncTeacherPanels();}
+    else {renderAutoRuleSummary(); renderLessonPlanPrint();}
+  }
+};
+document.getElementById("saveNum").onclick=()=>{
+  try{
+    const rows=Number(document.getElementById("gridRowsEdit").value);
+    const cols=Number(document.getElementById("gridColsEdit").value);
+    if(rows<3||rows>8||cols<3||cols>8) throw new Error("盤面列數、欄數需介於 3～8。");
+    data.grid=collectVisualGrid();
+    data.gridRows=rows;data.gridCols=cols;
+    data.tasks=collectSimpleTasks();
+    data=normalizeData(data);
+    saveData();
+    answerState.numeric=data.tasks.map(t=>Array.from({length:Math.max(1,Number(t.groups)||1)},()=>({value:"",cells:[]})));
+    clearGrade(); saveWorkSession(); render();
+    if(teacher){syncTeacherPanels();}
+    else {renderAutoRuleSummary(); renderLessonPlanPrint(); renderGridValidation();}
+    const bad=gridValidationReport().filter(x=>!x.ok);
+    alert(bad.length
+      ?"第三關已儲存，但有題目的正確答案組數不足。請查看「檢查盤面答案」結果再調整。"
+      :"第三關已儲存，所有題目都有足夠正確答案。");
+  }catch(e){alert("第三關設定有誤：\n"+e.message)}
+};
+
+document.querySelectorAll(".nav button").forEach(b=>b.onclick=()=>{
+  const target=document.querySelector(`.stage[data-stage="${b.dataset.go}"]`);
+  target?.scrollIntoView({behavior:"smooth",block:"start"});
+});
+document.getElementById("teacherBtn").onclick=()=>{
+  teacher=!teacher;
+  answersVisible=teacher;
+  render();
+  if(teacher){
+    syncTeacherPanels();
+    document.getElementById("teacherDashboard")?.scrollIntoView({behavior:"smooth",block:"start"});
+  }else{
+    setTeacherDirty(false);
+  }
+};
+document.getElementById("showAnswers").onclick=()=>{answersVisible=true;renderTeacherAnswers()};
+document.getElementById("hideAnswers").onclick=()=>{answersVisible=false;renderTeacherAnswers()};
+document.getElementById("printBtn").onclick=()=>{
+  if(teacher){
+    document.getElementById("printControlSection")?.scrollIntoView({behavior:"smooth",block:"start"});
+  }else{
+    document.querySelectorAll(".print-stage").forEach(x=>x.checked=true);
+    doPrintSeniorTwo();
+  }
+};
+document.getElementById("syncAllBtn").onclick=()=>{
+  // 只同步目前已儲存的設定；未儲存輸入不偷偷覆蓋
+  syncTeacherPanels();
+  alert("目前已儲存的題目、答案、盤面檢查與教案摘要已重新同步。");
+};
+document.getElementById("exitTeacherBtn").onclick=()=>{
+  teacher=false; answersVisible=false; setTeacherDirty(false); render();
+  window.scrollTo({top:0,behavior:"smooth"});
+};
+document.getElementById("fontSmaller").onclick=()=>applySeniorScale(seniorScale-.1);
+document.getElementById("fontNormal").onclick=()=>applySeniorScale(1);
+document.getElementById("fontLarger").onclick=()=>applySeniorScale(seniorScale+.1);
+document.getElementById("submitQuiz").onclick=submitQuiz;
+document.getElementById("clearGrade").onclick=clearGrade;
+document.getElementById("clearPairs").onclick=clearPairAnswers;
+document.getElementById("applyGridSize").onclick=()=>{
+  resizeGrid(document.getElementById("gridRowsEdit").value,document.getElementById("gridColsEdit").value);
+  render();
+};
+document.getElementById("randomGridBtn").onclick=()=>{
+  randomizeGrid(); render();
+};
+document.getElementById("validateGridBtn").onclick=()=>{
+  try{
+    data.grid=collectVisualGrid();
+    data.gridRows=data.grid.length; data.gridCols=data.grid[0].length;
+    data.tasks=collectSimpleTasks();
+    data=normalizeData(data);
+    renderGridValidation();
+    document.getElementById("gridValidation").scrollIntoView({behavior:"smooth",block:"center"});
+  }catch(e){alert("無法檢查盤面："+e.message)}
+};
+document.querySelectorAll("[data-jump]").forEach(b=>b.onclick=()=>{
+  document.querySelector(b.dataset.jump)?.scrollIntoView({behavior:"smooth",block:"start"});
+});
+document.querySelectorAll("[data-print-action]").forEach(b=>b.onclick=()=>{
+  const action=b.dataset.printAction;
+  if(action==="senior-two") doPrintSeniorTwo();
+  else if(action==="student-onepage") doPrintStudentOnePage();
+  else if(action==="student-pages") doPrintStudentPages();
+  else if(action==="answer") doPrintAnswer();
+  else if(action==="lesson") doPrintLesson();
+});
+document.getElementById("saveLessonPlan").onclick=saveLessonPlan;
+
+document.getElementById("resetBtn").onclick=()=>{
+  if(confirm("要清除目前作答標記嗎？")){
+    document.querySelectorAll(".marked,.selected,.answer").forEach(x=>x.classList.remove("marked","selected","answer"));
+    document.querySelectorAll(".answer-input,.eye-count-input").forEach(x=>x.value="");
+    document.querySelectorAll(".hintbox").forEach(x=>{x.classList.remove("show");x.textContent="";x.dataset.step=0});
+    document.getElementById("pairFeedback").textContent="";
+    paired.clear(); pairAnswers.clear(); selectedPairLeft=null;
+    answerState={
+      eyeSelections:data.eye.map(()=>[]),
+      eyeCount:"",
+      numeric:data.tasks.map(t=>Array.from({length:Math.max(1,Number(t.groups)||1)},()=>({value:"",cells:[]})))
+    };
+    numPick=[]; activeTaskIndex=0; activeSlotIndex=null; clearGrade(); clearWorkSession();
+    render();
+  }
+};
+document.getElementById("factoryReset").onclick=()=>{
+  if(confirm("要恢復全部預設題目嗎？這會覆蓋目前教師修改。")){
+    data=clone(DEFAULT); saveData(); render();
+  }
+};
+document.getElementById("exportBtn").onclick=()=>{
+  const blob=new Blob([JSON.stringify(data,null,2)],{type:"application/json"});
+  const a=document.createElement("a");
+  a.href=URL.createObjectURL(blob); a.download="腦力開機_題目設定.json"; a.click();
+  URL.revokeObjectURL(a.href);
+};
+document.getElementById("importFile").onchange=e=>{
+  const f=e.target.files[0]; if(!f)return;
+  const rd=new FileReader();
+  rd.onload=()=>{
+    try{
+      data=normalizeData(JSON.parse(rd.result));saveData();render();
+      if(teacher) syncTeacherPanels();
+      alert("匯入完成，題目、答案、盤面檢查與教案摘要已同步。");
+    }
+    catch(err){alert("JSON格式錯誤")}
+  };
+  rd.readAsText(f);
+};
+
+data=normalizeData(data);
+saveData();
+loadWorkSession();
+syncAnswerStateShape();
+loadSeniorScale();
+render();
+</script>
+</body>
+</html>
